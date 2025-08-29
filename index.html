@@ -217,6 +217,17 @@
             background-color: #2980b9;
         }
         
+        .delete-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
         .modal {
             display: none;
             position: fixed;
@@ -445,6 +456,18 @@
         </div>
     </div>
     
+    <!-- Modal de confirmação para exclusão -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h2>Confirmar Exclusão</h2>
+            <p id="deleteMessage">Tem certeza que deseja excluir este produto?</p>
+            <div class="form-actions">
+                <button type="button" class="btn btn-danger" onclick="closeDeleteModal()">Cancelar</button>
+                <button type="button" class="btn btn-success" id="confirmDeleteBtn">Excluir</button>
+            </div>
+        </div>
+    </div>
+    
     <footer>
         <div class="container">
             <p>Sistema de Controle de Produtos Congelados com Sincronização em Tempo Real &copy; 2023</p>
@@ -472,6 +495,7 @@
         let products = [];
         let isOnline = false;
         let pendingChanges = [];
+        let productToDelete = null;
 
         // Função para atualizar o status de conexão
         function updateConnectionStatus(connected) {
@@ -591,6 +615,24 @@
                 });
         }
 
+        // Função para excluir um produto do Firebase
+        function deleteProductFromFirebase(productId) {
+            return database.ref('products/' + productId).remove()
+                .then(() => {
+                    console.log("Produto excluído do Firebase:", productId);
+                    // Remover também do localStorage
+                    removeFromLocalStorage(productId);
+                    return true;
+                })
+                .catch((error) => {
+                    console.error("Erro ao excluir produto do Firebase:", error);
+                    // Se falhar, remover do localStorage e marcar como pendente
+                    removeFromLocalStorage(productId);
+                    pendingChanges.push({type: 'delete', data: {id: productId}});
+                    return false;
+                });
+        }
+
         // Função para processar mudanças pendentes
         function processPendingChanges() {
             if (pendingChanges.length === 0 || !isOnline) return;
@@ -612,6 +654,9 @@
                         break;
                     case 'add':
                         success = addProductToFirebase(change.data) !== null;
+                        break;
+                    case 'delete':
+                        success = deleteProductFromFirebase(change.data.id);
                         break;
                 }
                 
@@ -648,6 +693,14 @@
             saveToLocalStorage(products);
         }
 
+        function removeFromLocalStorage(productId) {
+            const index = products.findIndex(p => p.id === productId);
+            if (index !== -1) {
+                products.splice(index, 1);
+                saveToLocalStorage(products);
+            }
+        }
+
         // Função para renderizar os produtos na tabela
         function renderProducts(productsToRender = products) {
             const tableBody = document.querySelector('#productsTableBody');
@@ -675,6 +728,7 @@
                             <button class="btn set-quantity-btn" onclick="setQuantity('${product.id}')">Definir</button>
                             <button class="btn history-btn" onclick="showHistory('${product.id}')">Histórico</button>
                             <button class="btn edit-btn" onclick="openEditModal('${product.id}')">Editar</button>
+                            <button class="btn delete-btn" onclick="confirmDelete('${product.id}')">Excluir</button>
                         </div>
                     </td>
                 `;
@@ -816,6 +870,51 @@
         // Função para fechar modal de histórico
         function closeHistoryModal() {
             document.getElementById('historyModal').style.display = 'none';
+        }
+
+        // Função para confirmar exclusão de produto
+        function confirmDelete(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                productToDelete = id;
+                document.getElementById('deleteMessage').textContent = `Tem certeza que deseja excluir o produto "${product.name}" do fornecedor "${product.supplier}"?`;
+                document.getElementById('deleteModal').style.display = 'flex';
+            }
+        }
+
+        // Função para executar a exclusão do produto
+        function deleteProduct() {
+            if (productToDelete) {
+                if (isOnline) {
+                    deleteProductFromFirebase(productToDelete).then(() => {
+                        // Remover da lista local
+                        const index = products.findIndex(p => p.id === productToDelete);
+                        if (index !== -1) {
+                            products.splice(index, 1);
+                        }
+                        renderProducts();
+                        closeDeleteModal();
+                    });
+                } else {
+                    // Modo offline - remover localmente e adicionar à lista de pendências
+                    removeFromLocalStorage(productToDelete);
+                    pendingChanges.push({type: 'delete', data: {id: productToDelete}});
+                    
+                    // Remover da lista local
+                    const index = products.findIndex(p => p.id === productToDelete);
+                    if (index !== -1) {
+                        products.splice(index, 1);
+                    }
+                    renderProducts();
+                    closeDeleteModal();
+                }
+            }
+        }
+
+        // Função para fechar modal de exclusão
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            productToDelete = null;
         }
 
         // Função para abrir modal de adicionar produto
@@ -1072,6 +1171,9 @@
             loadProductsFromFirebase(() => {
                 renderProducts();
             });
+            
+            // Configurar o botão de confirmação de exclusão
+            document.getElementById('confirmDeleteBtn').addEventListener('click', deleteProduct);
         }
 
         // Inicializar a aplicação quando o documento estiver carregado
