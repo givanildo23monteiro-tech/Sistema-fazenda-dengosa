@@ -9,7 +9,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
-        /* Estilos anteriores mantidos */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -374,7 +373,7 @@
     <header>
         <div class="container">
             <h1>Controle de Produtos Congelados</h1>
-                     <p>controle fazenda</p>
+            <p>Gerencie o estoque dos seus produtos congelados com histórico completo</p>
             <div class="sync-status" id="syncStatus">
                 <span class="sync-indicator sync-pending" id="syncIndicator"></span>
                 <span id="syncText">Conectando...</span>
@@ -470,7 +469,7 @@
     
     <footer>
         <div class="container">
-            <p>controle semanal fazenda dengosa &copy; 2025</p>
+            <p>Sistema de Controle de Produtos Congelados com Sincronização em Tempo Real &copy; 2023</p>
         </div>
     </footer>
 
@@ -491,7 +490,527 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
-        // Dados iniciais baseados na planilha com histórico
+        // Dados iniciais baseados na planilha fornecida
+        const initialProducts = [
+            {
+                id: "1",
+                supplier: "POMELO",
+                name: "CROISSANT 55G",
+                organization: "PCTE C/10 UNIDADES",
+                currentQuantity: 19.0,
+                history: [
+                    { date: "2025-04-17", quantity: 110.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 140.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 118.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 118.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 59.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 29.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 19.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "2",
+                supplier: "POMELO",
+                name: "MINI PÃO DE CHOCOLATE",
+                organization: "PCTE C/25 UNIDADES",
+                currentQuantity: 25.0,
+                history: [
+                    { date: "2025-04-17", quantity: 250.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 150.0, action: "registro histórico" }, // =6*25
+                    { date: "2025-05-02", quantity: 125.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 125.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 75.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 75.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 75.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 75.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 30.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 25.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "3",
+                supplier: "POMELO",
+                name: "BAGUETTE RUSTIGUETTE",
+                organization: "PCTE C/05 UNIDADES",
+                currentQuantity: 0.0,
+                history: [
+                    { date: "2025-04-17", quantity: 25.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 22.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 22.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 22.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 15.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 15.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 15.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "4",
+                supplier: "POMELO",
+                name: "BAGUETTE GALICIA",
+                organization: "PCTE C/ 06 UNIDADES",
+                currentQuantity: 5.0,
+                history: [
+                    { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 9.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 9.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 5.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "5",
+                supplier: "BRAZ",
+                name: "PIZZA MUSSARELA",
+                organization: "UNIDADE",
+                currentQuantity: 0.0,
+                history: [
+                    { date: "2025-04-17", quantity: 6.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "6",
+                supplier: "BRAZ",
+                name: "PIZZA BRÁZ ABOBRINHA",
+                organization: "UNIDADE",
+                currentQuantity: 2.0,
+                history: [
+                    { date: "2025-04-17", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 2.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "7",
+                supplier: "BRAZ",
+                name: "PIZZA QUATRO QUEIJOS",
+                organization: "UNIDADE",
+                currentQuantity: 3.0,
+                history: [
+                    { date: "2025-04-17", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 3.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "8",
+                supplier: "BRAZ",
+                name: "PIZZA PORTUGUESA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0,
+                history: [
+                    { date: "2025-04-17", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "9",
+                supplier: "BRAZ",
+                name: "PIZZA CALABRESA",
+                organization: "UNIDADE",
+                currentQuantity: 0.0,
+                history: [
+                    { date: "2025-04-17", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "10",
+                supplier: "ALMANARA",
+                name: "ESFIHA CARNE FECHADA",
+                organization: "PCTE C/5 UNIDADES",
+                currentQuantity: 4.0, // 4cx
+                history: [
+                    { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 8.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 7.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 6.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 6.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" }, // 2 cx
+                    { date: "2025-08-05", quantity: 2.0, action: "registro histórico" }, // 2cx
+                    { date: "2025-08-15", quantity: 4.0, action: "registro histórico" } // 4cx
+                ]
+            },
+            {
+                id: "11",
+                supplier: "ALMANARA",
+                name: "ESFIHA QUEIJO ABERTA",
+                organization: "PCTE C/5 UNIDADES",
+                currentQuantity: 3.0, // 3cx
+                history: [
+                    { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, // 1 cx
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1cx
+                    { date: "2025-08-15", quantity: 3.0, action: "registro histórico" } // 3cx
+                ]
+            },
+            {
+                id: "12",
+                supplier: "ALMANARA",
+                name: "ESFIHA ZATAR ABERTA-",
+                organization: "PCTE C/5 UNIDADES",
+                currentQuantity: 8.0, // 8cx
+                history: [
+                    { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 17.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 17.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 17.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 16.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 16.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 16.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 10.0, action: "registro histórico" }, // 10 cx
+                    { date: "2025-08-05", quantity: 10.0, action: "registro histórico" }, // 10cx
+                    { date: "2025-08-15", quantity: 8.0, action: "registro histórico" } // 8cx
+                ]
+            },
+            {
+                id: "13",
+                supplier: "SWIFT",
+                name: "BOLINHO DE QUEIJO",
+                organization: "PACOTE",
+                currentQuantity: 0.0,
+                history: [
+                    { date: "2025-05-27", quantity: 7.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 7.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 7.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 3.0, action: "registro histórico" }, // 3 cx
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "14",
+                supplier: "APERITIVO",
+                name: "PASTEL DE CARNE",
+                organization: "UNIDADE",
+                currentQuantity: 0.0,
+                history: [
+                    { date: "2025-05-27", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "15",
+                supplier: "CHURRASCO",
+                name: "HAMBURGUER WAGYU",
+                organization: "CAIXINHA C/ 2 UNIDADES",
+                currentQuantity: 1.0,
+                history: [
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "16",
+                supplier: "CHURRASCO",
+                name: "HAMBURGUER PERDIZES",
+                organization: "UNIDADE",
+                currentQuantity: 9.0,
+                history: [
+                    { date: "2025-05-27", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 9.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 9.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 9.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "17",
+                supplier: "CHURRASCO",
+                name: "PÃO DE HAMBURGUER",
+                organization: "UNIDADE",
+                currentQuantity: 14.0,
+                history: [
+                    { date: "2025-05-27", quantity: 14.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 14.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 14.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 14.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 14.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 14.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "18",
+                supplier: "CHURRASCO",
+                name: "QUEIJO CHEDDAR PCTE",
+                organization: "PCTE",
+                currentQuantity: 2.0,
+                history: [
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 2.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "19",
+                supplier: "CHURRASCO",
+                name: "PÃO DE ALHO SANTA MASSA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0,
+                history: [
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "20",
+                supplier: "CHURRASCO",
+                name: "QUEIJO COALHO QUATÁ",
+                organization: "UNIDADE",
+                currentQuantity: 4.0,
+                history: [
+                    { date: "2025-04-17", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 4.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "21",
+                supplier: "CHURRASCO",
+                name: "LINGUIÇA BOMBINHA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0,
+                history: [
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "22",
+                supplier: "CHURRASCO",
+                name: "DRUMET DE FRANGO",
+                organization: "UNIDADE",
+                currentQuantity: 0.0,
+                history: [
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "23",
+                supplier: "CHURRASCO",
+                name: "FILÉ DE FRANGO",
+                organization: "UNIDADE",
+                currentQuantity: 0.0,
+                history: [
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "24",
+                supplier: "NATURAL BRASIL",
+                name: "ÁGUA DE COCO - 1 L",
+                organization: "UNIDADE",
+                currentQuantity: 6.0,
+                history: [
+                    { date: "2025-04-17", quantity: 12.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 6.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 6.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 6.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "25",
+                supplier: "KIBOM",
+                name: "SKINBOM",
+                organization: "UNIDADE",
+                currentQuantity: 8.0, // 8CX
+                history: [
+                    { date: "2025-08-05", quantity: 5.0, action: "registro histórico" }, // 5CX
+                    { date: "2025-08-15", quantity: 8.0, action: "registro histórico" } // 8CX
+                ]
+            },
+            {
+                id: "26",
+                supplier: "FINA",
+                name: "TOSCANA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            },
+            {
+                id: "27",
+                supplier: "BRASA",
+                name: "TOSCANA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            },
+            {
+                id: "28",
+                supplier: "SWIFT",
+                name: "TOSCANA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            },
+            {
+                id: "29",
+                supplier: "SADIA",
+                name: "TOSCANA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            },
+            {
+                id: "30",
+                supplier: "OURO",
+                name: "PICANHA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            },
+            {
+                id: "31",
+                supplier: "SWIFT",
+                name: "PICANHA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            }
+        ];
+
         let products = [];
         let isOnline = false;
         let pendingChanges = [];
@@ -541,6 +1060,7 @@
                     if (callback) callback();
                 } else {
                     // Se não houver dados no Firebase, usar dados iniciais
+                    initializeWithDefaultData();
                     if (callback) callback();
                 }
             }, (error) => {
@@ -549,6 +1069,26 @@
                 loadFromLocalStorage();
                 if (callback) callback();
             });
+        }
+
+        // Função para inicializar com dados padrão
+        function initializeWithDefaultData() {
+            // Verificar se já temos dados no localStorage
+            const storedProducts = localStorage.getItem('frozenProductsWithHistory');
+            
+            if (!storedProducts) {
+                // Se não houver dados salvos, usar os dados iniciais da planilha
+                products = [...initialProducts];
+                saveToLocalStorage(products);
+                
+                // Salvar também no Firebase se estiver online
+                if (isOnline) {
+                    saveProductsToFirebase(products);
+                }
+            } else {
+                // Carregar dados do localStorage
+                loadFromLocalStorage();
+            }
         }
 
         // Função para salvar produtos no Firebase
@@ -1165,6 +1705,12 @@
         function initApp() {
             // Primeiro carregar do localStorage para exibir algo rapidamente
             loadFromLocalStorage();
+            
+            // Se não houver dados, inicializar com os dados padrão
+            if (products.length === 0) {
+                initializeWithDefaultData();
+            }
+            
             renderProducts();
             
             // Depois tentar carregar do Firebase
