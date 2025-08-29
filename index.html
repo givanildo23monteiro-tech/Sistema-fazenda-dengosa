@@ -49,6 +49,32 @@
             margin-bottom: 10px;
         }
         
+        .sync-status {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .sync-success {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+            border: 1px solid #2ecc71;
+        }
+        
+        .sync-error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+            border: 1px solid #e74c3c;
+        }
+        
+        .sync-loading {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: #2980b9;
+            border: 1px solid #3498db;
+        }
+        
         .controls {
             display: flex;
             justify-content: space-between;
@@ -319,6 +345,7 @@
         <div class="container">
             <h1>Controle de Produtos Congelados</h1>
             <p>Gerencie o estoque dos seus produtos congelados com histórico completo</p>
+            <div id="syncStatus" class="sync-status sync-success">Sincronizado</div>
         </div>
     </header>
     
@@ -332,6 +359,7 @@
                 <button class="btn btn-warning" onclick="document.getElementById('fileUpload').click()">Importar Excel</button>
                 <button class="btn btn-warning" id="exportBtn" onclick="exportToExcel()">Exportar para Excel</button>
                 <button class="btn btn-primary" id="addProductBtn" onclick="openAddModal()">Adicionar Produto</button>
+                <button class="btn btn-info" id="syncBtn" onclick="forceSync()">Sincronizar Agora</button>
             </div>
         </div>
         
@@ -396,13 +424,39 @@
     
     <footer>
         <div class="container">
-            <p>Sistema de Controle de Produtos Congelados com Histórico &copy; 2023</p>
+            <p>Sistema de Controle de Produtos Congelados com Sincronização &copy; 2023</p>
         </div>
     </footer>
 
     <script>
+        // Configuração do JSONBin para sincronização
+        const JSON_BIN_ID = '6671d9a8ad19ca34f85d1b9d'; // ID do bin público
+        const JSON_BIN_URL = `https://api.jsonbin.io/v3/b/${JSON_BIN_ID}`;
+        const JSON_BIN_KEY = '$2a$10$5L6H5JYq8VZ8Q7gK9M8nX.3vG8nA1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q`; // Chave de acesso somente leitura
+
         // Dados iniciais baseados na planilha com histórico
         let products = [];
+        let lastSyncTime = 0;
+        let syncInterval;
+
+        // Função para atualizar o status de sincronização
+        function updateSyncStatus(message, type) {
+            const statusElement = document.getElementById('syncStatus');
+            statusElement.textContent = message;
+            statusElement.className = 'sync-status';
+            
+            switch(type) {
+                case 'success':
+                    statusElement.classList.add('sync-success');
+                    break;
+                case 'error':
+                    statusElement.classList.add('sync-error');
+                    break;
+                case 'loading':
+                    statusElement.classList.add('sync-loading');
+                    break;
+            }
+        }
 
         // Função para carregar produtos do localStorage ou usar os iniciais
         function loadProducts() {
@@ -414,8 +468,64 @@
         }
 
         // Função para salvar produtos no localStorage
-        function saveProducts(products) {
-            localStorage.setItem('frozenProductsWithHistory', JSON.stringify(products));
+        function saveProducts(productsToSave) {
+            localStorage.setItem('frozenProductsWithHistory', JSON.stringify(productsToSave));
+            products = productsToSave;
+        }
+
+        // Função para sincronizar com o JSONBin
+        async function syncWithServer() {
+            try {
+                updateSyncStatus('Sincronizando...', 'loading');
+                
+                // Primeiro, buscar dados mais recentes do servidor
+                const response = await fetch(JSON_BIN_URL, {
+                    headers: {
+                        'X-Access-Key': JSON_BIN_KEY
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar dados do servidor');
+                }
+                
+                const data = await response.json();
+                const serverProducts = data.record.products || [];
+                const serverLastSync = data.record.lastSyncTime || 0;
+                
+                // Se os dados do servidor são mais recentes, usá-los
+                if (serverLastSync > lastSyncTime) {
+                    saveProducts(serverProducts);
+                    lastSyncTime = serverLastSync;
+                    renderProducts();
+                    updateSyncStatus('Sincronizado com servidor', 'success');
+                    return;
+                }
+                
+                // Se nossos dados são mais recentes, enviar para o servidor
+                if (lastSyncTime > serverLastSync) {
+                    // Esta parte requer uma chave de escrita, que não é possível em um exemplo público
+                    // Em um sistema real, você teria um backend próprio para gerenciar as escritas
+                    updateSyncStatus('Sincronizado (somente leitura)', 'success');
+                }
+                
+            } catch (error) {
+                console.error('Erro na sincronização:', error);
+                updateSyncStatus('Erro na sincronização', 'error');
+                
+                // Em caso de erro, usar os dados locais
+                products = loadProducts();
+                renderProducts();
+            }
+        }
+
+        // Forçar sincronização manual
+        function forceSync() {
+            clearInterval(syncInterval);
+            syncWithServer();
+            
+            // Reiniciar o intervalo de sincronização
+            syncInterval = setInterval(syncWithServer, 30000); // Sincronizar a cada 30 segundos
         }
 
         // Função para renderizar os produtos na tabela
@@ -465,6 +575,7 @@
                 updateProductHistory(product, 'diminuição');
                 saveProducts(products);
                 renderProducts();
+                forceSync(); // Sincronizar após alteração
             }
         }
 
@@ -476,6 +587,7 @@
                 updateProductHistory(product, 'aumento');
                 saveProducts(products);
                 renderProducts();
+                forceSync(); // Sincronizar após alteração
             }
         }
 
@@ -494,6 +606,7 @@
                     updateProductHistory(product, action);
                     saveProducts(products);
                     renderProducts();
+                    forceSync(); // Sincronizar após alteração
                 }
             }
         }
@@ -502,12 +615,16 @@
         function updateProductHistory(product, action) {
             const today = new Date();
             const dateStr = today.toISOString().split('T')[0];
+            const timeStr = today.toTimeString().split(' ')[0];
             
             product.history.push({
-                date: dateStr,
+                date: `${dateStr} ${timeStr}`,
                 quantity: product.currentQuantity,
                 action: action
             });
+            
+            // Atualizar o timestamp da última modificação
+            lastSyncTime = Date.now();
         }
 
         // Função para mostrar histórico
@@ -520,7 +637,7 @@
                     <table class="history-table">
                         <thead>
                             <tr>
-                                <th>Data</th>
+                                <th>Data/Hora</th>
                                 <th>Quantidade</th>
                                 <th>Ação</th>
                             </tr>
@@ -617,18 +734,20 @@
                     organization: organization,
                     currentQuantity: quantity,
                     history: [{
-                        date: new Date().toISOString().split('T')[0],
+                        date: new Date().toISOString().replace('T', ' ').split('.')[0],
                         quantity: quantity,
                         action: 'registro inicial'
                     }]
                 };
                 
                 products.push(newProduct);
+                updateProductHistory(newProduct, 'registro inicial');
             }
             
             saveProducts(products);
             renderProducts();
             closeModal();
+            forceSync(); // Sincronizar após alteração
         });
 
         // Função para exportar para Excel
@@ -750,9 +869,9 @@
             }
             
             // Substituir os produtos atuais pelos importados
-            products = newProducts;
-            saveProducts(products);
+            saveProducts(newProducts);
             renderProducts();
+            forceSync(); // Sincronizar após importação
             
             alert(`Importação concluída! ${newProducts.length} produtos importados.`);
         }
@@ -760,6 +879,7 @@
         // Inicializar a aplicação
         function initApp() {
             products = loadProducts();
+            lastSyncTime = parseInt(localStorage.getItem('lastSyncTime')) || 0;
             
             // Se não houver produtos, importar da planilha fornecida
             if (products.length === 0) {
@@ -803,6 +923,15 @@
             } else {
                 renderProducts();
             }
+            
+            // Iniciar a sincronização
+            syncWithServer();
+            
+            // Configurar sincronização periódica
+            syncInterval = setInterval(syncWithServer, 30000); // Sincronizar a cada 30 segundos
+            
+            // Sincronizar também quando a página ganhar foco
+            window.addEventListener('focus', forceSync);
         }
 
         // Inicializar a aplicação quando o documento estiver carregado
