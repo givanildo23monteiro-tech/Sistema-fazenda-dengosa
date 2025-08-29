@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Produtos Congelados</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Adicionando Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
+        /* Estilos anteriores mantidos */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -47,32 +51,6 @@
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-        }
-        
-        .sync-status {
-            margin: 10px 0;
-            padding: 8px;
-            border-radius: 4px;
-            text-align: center;
-            font-weight: 500;
-        }
-        
-        .sync-success {
-            background-color: rgba(46, 204, 113, 0.2);
-            color: #27ae60;
-            border: 1px solid #2ecc71;
-        }
-        
-        .sync-error {
-            background-color: rgba(231, 76, 60, 0.2);
-            color: #c0392b;
-            border: 1px solid #e74c3c;
-        }
-        
-        .sync-loading {
-            background-color: rgba(52, 152, 219, 0.2);
-            color: #2980b9;
-            border: 1px solid #3498db;
         }
         
         .controls {
@@ -320,37 +298,6 @@
             font-size: 14px;
         }
         
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: 5px;
-            color: white;
-            font-weight: 500;
-            z-index: 2000;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
-        }
-        
-        .notification.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .notification.success {
-            background-color: var(--success-color);
-        }
-        
-        .notification.error {
-            background-color: var(--accent-color);
-        }
-        
-        .notification.info {
-            background-color: var(--secondary-color);
-        }
-        
         @media (max-width: 768px) {
             .controls {
                 flex-direction: column;
@@ -368,16 +315,6 @@
             .quantity-controls {
                 flex-wrap: wrap;
             }
-            
-            .notification {
-                left: 20px;
-                right: 20px;
-                transform: translateY(-100%);
-            }
-            
-            .notification.show {
-                transform: translateY(0);
-            }
         }
 
         .loading {
@@ -386,16 +323,51 @@
             font-size: 18px;
             color: #7f8c8d;
         }
+        
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .sync-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .sync-online {
+            background-color: var(--success-color);
+        }
+        
+        .sync-offline {
+            background-color: var(--accent-color);
+        }
+        
+        .sync-pending {
+            background-color: var(--warning-color);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <div class="notification" id="notification"></div>
-    
     <header>
         <div class="container">
             <h1>Controle de Produtos Congelados</h1>
             <p>Gerencie o estoque dos seus produtos congelados com histórico completo</p>
-            <div id="syncStatus" class="sync-status sync-success">Sincronizado</div>
+            <div class="sync-status" id="syncStatus">
+                <span class="sync-indicator sync-pending" id="syncIndicator"></span>
+                <span id="syncText">Conectando...</span>
+            </div>
         </div>
     </header>
     
@@ -409,7 +381,6 @@
                 <button class="btn btn-warning" onclick="document.getElementById('fileUpload').click()">Importar Excel</button>
                 <button class="btn btn-warning" id="exportBtn" onclick="exportToExcel()">Exportar para Excel</button>
                 <button class="btn btn-primary" id="addProductBtn" onclick="openAddModal()">Adicionar Produto</button>
-                <button class="btn btn-info" id="syncBtn" onclick="forceSync()">Sincronizar Agora</button>
             </div>
         </div>
         
@@ -476,88 +447,205 @@
     
     <footer>
         <div class="container">
-            <p>Sistema de Controle de Produtos Congelados com Sincronização &copy; 2023</p>
+            <p>Sistema de Controle de Produtos Congelados com Sincronização em Tempo Real &copy; 2023</p>
         </div>
     </footer>
 
     <script>
+        // Configuração do Firebase com suas credenciais
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOCOZGE1Gw5WP03NEWBOYAm0bLcMXxYeo",
+            authDomain: "sistema-66a68.firebaseapp.com",
+            databaseURL: "https://sistema-66a68-default-rtdb.firebaseio.com",
+            projectId: "sistema-66a68",
+            storageBucket: "sistema-66a68.firebasestorage.app",
+            messagingSenderId: "760244638816",
+            appId: "1:760244638816:web:52200f4caf63c9e3f19f05",
+            measurementId: "G-GHZTH43VQN"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
         // Dados iniciais baseados na planilha com histórico
         let products = [];
-        let lastUpdateTime = 0;
-        let syncInterval;
-        let isOnline = true;
+        let isOnline = false;
+        let pendingChanges = [];
 
-        // Função para mostrar notificações
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
+        // Função para atualizar o status de conexão
+        function updateConnectionStatus(connected) {
+            isOnline = connected;
+            const indicator = document.getElementById('syncIndicator');
+            const text = document.getElementById('syncText');
             
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        // Função para atualizar o status de sincronização
-        function updateSyncStatus(message, type) {
-            const statusElement = document.getElementById('syncStatus');
-            statusElement.textContent = message;
-            statusElement.className = 'sync-status';
-            
-            switch(type) {
-                case 'success':
-                    statusElement.classList.add('sync-success');
-                    break;
-                case 'error':
-                    statusElement.classList.add('sync-error');
-                    break;
-                case 'loading':
-                    statusElement.classList.add('sync-loading');
-                    break;
-            }
-        }
-
-        // Função para verificar conexão com a internet
-        function checkOnlineStatus() {
-            isOnline = navigator.onLine;
-            if (isOnline) {
-                updateSyncStatus('Sincronizado', 'success');
+            if (connected) {
+                indicator.className = 'sync-indicator sync-online';
+                text.textContent = 'Conectado e sincronizado';
+                
+                // Processar mudanças pendentes se houver
+                processPendingChanges();
             } else {
-                updateSyncStatus('Offline - Modo Local', 'error');
+                indicator.className = 'sync-indicator sync-offline';
+                text.textContent = 'Offline - Alterações serão sincronizadas quando online';
             }
-            return isOnline;
         }
 
-        // Função para carregar produtos do localStorage
-        function loadProducts() {
+        // Verificar status de conexão
+        firebase.database().ref('.info/connected').on('value', function(snapshot) {
+            updateConnectionStatus(snapshot.val() === true);
+        });
+
+        // Função para carregar produtos do Firebase
+        function loadProductsFromFirebase(callback) {
+            const productsRef = database.ref('products');
+            
+            productsRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    // Converter objeto do Firebase em array
+                    products = Object.keys(data).map(key => {
+                        return {
+                            id: key,
+                            ...data[key]
+                        };
+                    });
+                    
+                    // Ordenar produtos por ID
+                    products.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+                    
+                    if (callback) callback();
+                } else {
+                    // Se não houver dados no Firebase, usar dados iniciais
+                    if (callback) callback();
+                }
+            }, (error) => {
+                console.error("Erro ao carregar dados:", error);
+                // Em caso de erro, tentar carregar do localStorage como fallback
+                loadFromLocalStorage();
+                if (callback) callback();
+            });
+        }
+
+        // Função para salvar produtos no Firebase
+        function saveProductsToFirebase(products) {
+            // Converter array para objeto para o Firebase
+            const productsObj = {};
+            products.forEach(product => {
+                productsObj[product.id] = product;
+            });
+            
+            return database.ref('products').set(productsObj)
+                .then(() => {
+                    console.log("Dados salvos no Firebase com sucesso");
+                    // Também salvar no localStorage como backup
+                    saveToLocalStorage(products);
+                    return true;
+                })
+                .catch((error) => {
+                    console.error("Erro ao salvar no Firebase:", error);
+                    // Se falhar, salvar apenas no localStorage e marcar como pendente
+                    saveToLocalStorage(products);
+                    pendingChanges.push({type: 'fullUpdate', data: products});
+                    return false;
+                });
+        }
+
+        // Função para atualizar um produto específico no Firebase
+        function updateProductInFirebase(product) {
+            return database.ref('products/' + product.id).set(product)
+                .then(() => {
+                    console.log("Produto atualizado no Firebase:", product.id);
+                    // Atualizar também no localStorage
+                    updateInLocalStorage(product);
+                    return true;
+                })
+                .catch((error) => {
+                    console.error("Erro ao atualizar produto no Firebase:", error);
+                    // Se falhar, salvar no localStorage e marcar como pendente
+                    updateInLocalStorage(product);
+                    pendingChanges.push({type: 'update', data: product});
+                    return false;
+                });
+        }
+
+        // Função para adicionar um novo produto no Firebase
+        function addProductToFirebase(product) {
+            // Gerar um ID único usando o timestamp
+            const newId = Date.now().toString();
+            product.id = newId;
+            
+            return database.ref('products/' + newId).set(product)
+                .then(() => {
+                    console.log("Produto adicionado ao Firebase:", newId);
+                    // Adicionar também no localStorage
+                    addToLocalStorage(product);
+                    return newId;
+                })
+                .catch((error) => {
+                    console.error("Erro ao adicionar produto no Firebase:", error);
+                    // Se falhar, salvar no localStorage e marcar como pendente
+                    addToLocalStorage(product);
+                    pendingChanges.push({type: 'add', data: product});
+                    return newId;
+                });
+        }
+
+        // Função para processar mudanças pendentes
+        function processPendingChanges() {
+            if (pendingChanges.length === 0 || !isOnline) return;
+            
+            console.log("Processando", pendingChanges.length, "mudanças pendentes");
+            
+            // Processar cada mudança pendente
+            const newPendingChanges = [];
+            
+            pendingChanges.forEach(change => {
+                let success = false;
+                
+                switch(change.type) {
+                    case 'fullUpdate':
+                        success = saveProductsToFirebase(change.data);
+                        break;
+                    case 'update':
+                        success = updateProductInFirebase(change.data);
+                        break;
+                    case 'add':
+                        success = addProductToFirebase(change.data) !== null;
+                        break;
+                }
+                
+                if (!success) {
+                    newPendingChanges.push(change);
+                }
+            });
+            
+            pendingChanges = newPendingChanges;
+        }
+
+        // Funções para localStorage (como fallback)
+        function saveToLocalStorage(products) {
+            localStorage.setItem('frozenProductsWithHistory', JSON.stringify(products));
+        }
+
+        function loadFromLocalStorage() {
             const storedProducts = localStorage.getItem('frozenProductsWithHistory');
             if (storedProducts) {
-                return JSON.parse(storedProducts);
-            }
-            return [];
-        }
-
-        // Função para salvar produtos no localStorage
-        function saveProducts(productsToSave) {
-            localStorage.setItem('frozenProductsWithHistory', JSON.stringify(productsToSave));
-            products = productsToSave;
-            
-            // Atualizar o timestamp da última modificação
-            lastUpdateTime = Date.now();
-            localStorage.setItem('lastUpdateTime', lastUpdateTime.toString());
-            
-            // Notificar outros dispositivos se estiver online
-            if (isOnline) {
-                broadcastUpdate();
+                products = JSON.parse(storedProducts);
             }
         }
 
-        // Função para broadcast de atualização (simulada)
-        function broadcastUpdate() {
-            // Em um sistema real, isso enviaria uma notificação para outros dispositivos
-            // Como estamos apenas simulando, apenas mostramos uma mensagem
-            showNotification('Alterações salvas e sincronizadas', 'success');
+        function updateInLocalStorage(product) {
+            const index = products.findIndex(p => p.id === product.id);
+            if (index !== -1) {
+                products[index] = product;
+                saveToLocalStorage(products);
+            }
+        }
+
+        function addToLocalStorage(product) {
+            products.push(product);
+            saveToLocalStorage(products);
         }
 
         // Função para renderizar os produtos na tabela
@@ -581,12 +669,12 @@
                     <td>${product.currentQuantity}</td>
                     <td>
                         <div class="quantity-controls">
-                            <button class="quantity-btn decrease" onclick="decreaseQuantity(${product.id})">-</button>
+                            <button class="quantity-btn decrease" onclick="decreaseQuantity('${product.id}')">-</button>
                             <input type="number" class="quantity-input" id="input-${product.id}" value="${product.currentQuantity}" min="0">
-                            <button class="quantity-btn increase" onclick="increaseQuantity(${product.id})">+</button>
-                            <button class="btn set-quantity-btn" onclick="setQuantity(${product.id})">Definir</button>
-                            <button class="btn history-btn" onclick="showHistory(${product.id})">Histórico</button>
-                            <button class="btn edit-btn" onclick="openEditModal(${product.id})">Editar</button>
+                            <button class="quantity-btn increase" onclick="increaseQuantity('${product.id}')">+</button>
+                            <button class="btn set-quantity-btn" onclick="setQuantity('${product.id}')">Definir</button>
+                            <button class="btn history-btn" onclick="showHistory('${product.id}')">Histórico</button>
+                            <button class="btn edit-btn" onclick="openEditModal('${product.id}')">Editar</button>
                         </div>
                     </td>
                 `;
@@ -611,7 +699,14 @@
             if (product && product.currentQuantity > 0) {
                 product.currentQuantity--;
                 updateProductHistory(product, 'diminuição');
-                saveProducts(products);
+                
+                if (isOnline) {
+                    updateProductInFirebase(product);
+                } else {
+                    updateInLocalStorage(product);
+                    pendingChanges.push({type: 'update', data: product});
+                }
+                
                 renderProducts();
             }
         }
@@ -622,7 +717,14 @@
             if (product) {
                 product.currentQuantity++;
                 updateProductHistory(product, 'aumento');
-                saveProducts(products);
+                
+                if (isOnline) {
+                    updateProductInFirebase(product);
+                } else {
+                    updateInLocalStorage(product);
+                    pendingChanges.push({type: 'update', data: product});
+                }
+                
                 renderProducts();
             }
         }
@@ -634,4 +736,346 @@
             const newQuantity = parseInt(input.value);
             
             if (product && !isNaN(newQuantity) && newQuantity >= 0) {
-                const oldQuantity = product.curr
+                const oldQuantity = product.currentQuantity;
+                product.currentQuantity = newQuantity;
+                
+                if (oldQuantity !== newQuantity) {
+                    const action = newQuantity > oldQuantity ? 'aumento' : 'diminuição';
+                    updateProductHistory(product, action);
+                    
+                    if (isOnline) {
+                        updateProductInFirebase(product);
+                    } else {
+                        updateInLocalStorage(product);
+                        pendingChanges.push({type: 'update', data: product});
+                    }
+                    
+                    renderProducts();
+                }
+            }
+        }
+
+        // Função para atualizar o histórico do produto
+        function updateProductHistory(product, action) {
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0];
+            const timeStr = today.toTimeString().split(' ')[0];
+            
+            if (!product.history) {
+                product.history = [];
+            }
+            
+            product.history.push({
+                date: `${dateStr} ${timeStr}`,
+                quantity: product.currentQuantity,
+                action: action
+            });
+        }
+
+        // Função para mostrar histórico
+        function showHistory(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                const historyContent = document.getElementById('historyContent');
+                
+                let historyHTML = `
+                    <h3>${product.name} - ${product.supplier}</h3>
+                    <p>Quantidade atual: <strong>${product.currentQuantity}</strong></p>
+                `;
+                
+                if (product.history && product.history.length > 0) {
+                    historyHTML += `
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Quantidade</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${product.history.map(entry => `
+                                    <tr>
+                                        <td>${entry.date}</td>
+                                        <td>${entry.quantity}</td>
+                                        <td>${entry.action || 'registro inicial'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    historyHTML += '<p>Nenhum histórico disponível para este produto.</p>';
+                }
+                
+                historyContent.innerHTML = historyHTML;
+                document.getElementById('historyModal').style.display = 'flex';
+            }
+        }
+
+        // Função para fechar modal de histórico
+        function closeHistoryModal() {
+            document.getElementById('historyModal').style.display = 'none';
+        }
+
+        // Função para abrir modal de adicionar produto
+        function openAddModal() {
+            document.getElementById('productId').value = '';
+            document.getElementById('supplier').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('organization').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('modalTitle').textContent = 'Adicionar Produto';
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        // Função para abrir modal de edição de produto
+        function openEditModal(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                document.getElementById('productId').value = product.id;
+                document.getElementById('supplier').value = product.supplier;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('organization').value = product.organization;
+                document.getElementById('quantity').value = product.currentQuantity;
+                document.getElementById('modalTitle').textContent = 'Editar Produto';
+                document.getElementById('productModal').style.display = 'flex';
+            }
+        }
+
+        // Função para fechar modal
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        // Função para processar o formulário de produto
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const productId = document.getElementById('productId').value;
+            const supplier = document.getElementById('supplier').value;
+            const productName = document.getElementById('productName').value;
+            const organization = document.getElementById('organization').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            
+            if (productId) {
+                // Editar produto existente
+                const product = products.find(p => p.id === productId);
+                if (product) {
+                    // Verificar se houve mudanças nos dados
+                    const changes = [];
+                    if (product.supplier !== supplier) changes.push(`Fornecedor: ${product.supplier} → ${supplier}`);
+                    if (product.name !== productName) changes.push(`Nome: ${product.name} → ${productName}`);
+                    if (product.organization !== organization) changes.push(`Organização: ${product.organization} → ${organization}`);
+                    if (product.currentQuantity !== quantity) changes.push(`Quantidade: ${product.currentQuantity} → ${quantity}`);
+                    
+                    // Aplicar as mudanças
+                    product.supplier = supplier;
+                    product.name = productName;
+                    product.organization = organization;
+                    product.currentQuantity = quantity;
+                    
+                    // Registrar no histórico se houver mudanças
+                    if (changes.length > 0) {
+                        updateProductHistory(product, `edição: ${changes.join(', ')}`);
+                    }
+                    
+                    if (isOnline) {
+                        updateProductInFirebase(product);
+                    } else {
+                        updateInLocalStorage(product);
+                        pendingChanges.push({type: 'update', data: product});
+                    }
+                }
+            } else {
+                // Adicionar novo produto
+                const today = new Date();
+                const dateStr = today.toISOString().split('T')[0];
+                const timeStr = today.toTimeString().split(' ')[0];
+                
+                const newProduct = {
+                    supplier: supplier,
+                    name: productName,
+                    organization: organization,
+                    currentQuantity: quantity,
+                    history: [{
+                        date: `${dateStr} ${timeStr}`,
+                        quantity: quantity,
+                        action: 'registro inicial'
+                    }]
+                };
+                
+                if (isOnline) {
+                    addProductToFirebase(newProduct).then(id => {
+                        newProduct.id = id;
+                        products.push(newProduct);
+                        renderProducts();
+                    });
+                } else {
+                    // Gerar ID temporário para uso offline
+                    newProduct.id = 'temp_' + Date.now();
+                    addToLocalStorage(newProduct);
+                    pendingChanges.push({type: 'add', data: newProduct});
+                    products.push(newProduct);
+                    renderProducts();
+                }
+            }
+            
+            closeModal();
+        });
+
+        // Função para exportar para Excel
+        function exportToExcel() {
+            // Criar uma nova planilha
+            const ws = XLSX.utils.json_to_sheet(products.map(p => ({
+                Fornecedor: p.supplier,
+                Produto: p.name,
+                Organização: p.organization,
+                Quantidade: p.currentQuantity
+            })));
+            
+            // Criar um novo workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Produtos Congelados");
+            
+            // Salvar o arquivo
+            XLSX.writeFile(wb, "controle_congelados.xlsx");
+        }
+
+        // Função para processar o arquivo Excel
+        document.getElementById('fileUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                
+                // Processar a primeira planilha
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                
+                // Processar os dados da planilha
+                processExcelData(jsonData);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        // Função para processar dados do Excel
+        function processExcelData(data) {
+            // Encontrar a linha com os cabeçalhos de data
+            let headerRowIndex = -1;
+            for (let i = 0; i < data.length; i++) {
+                if (data[i] && data[i].length > 0 && typeof data[i][0] === 'string' && data[i][0].includes('FORNECEDOR')) {
+                    headerRowIndex = i;
+                    break;
+                }
+            }
+            
+            if (headerRowIndex === -1) {
+                alert('Não foi possível identificar o formato da planilha.');
+                return;
+            }
+            
+            // Extrair as datas dos cabeçalhos
+            const dates = [];
+            for (let j = 3; j < data[headerRowIndex].length; j++) {
+                if (data[headerRowIndex][j] && typeof data[headerRowIndex][j] === 'string') {
+                    // Tentar converter a data
+                    const dateStr = data[headerRowIndex][j];
+                    dates.push(dateStr.split(' ')[0]); // Pegar apenas a parte da data
+                }
+            }
+            
+            // Processar os produtos
+            const newProducts = [];
+            for (let i = headerRowIndex + 1; i < data.length; i++) {
+                if (!data[i] || data[i].length < 4) continue;
+                
+                const supplier = data[i][1];
+                const productName = data[i][2];
+                const organization = data[i][3];
+                
+                if (!supplier || !productName) continue;
+                
+                // Extrair o histórico de quantidades
+                const history = [];
+                for (let j = 0; j < dates.length; j++) {
+                    const quantity = data[i][4 + j];
+                    if (quantity !== undefined && quantity !== null && quantity !== '') {
+                        // Converter valores como "2 cx" para números
+                        let qtyValue = quantity;
+                        if (typeof quantity === 'string') {
+                            if (quantity.includes('cx')) {
+                                qtyValue = parseInt(quantity) || 0;
+                            } else if (quantity.includes('*')) {
+                                // Calcular expressões como "=6*25"
+                                try {
+                                    qtyValue = eval(quantity.replace('=', ''));
+                                } catch (e) {
+                                    qtyValue = 0;
+                                }
+                            } else {
+                                qtyValue = parseFloat(quantity) || 0;
+                            }
+                        }
+                        
+                        history.push({
+                            date: dates[j],
+                            quantity: qtyValue,
+                            action: 'registro histórico'
+                        });
+                    }
+                }
+                
+                // Determinar a quantidade atual (último registro)
+                const currentQuantity = history.length > 0 ? history[history.length - 1].quantity : 0;
+                
+                newProducts.push({
+                    supplier: supplier,
+                    name: productName,
+                    organization: organization,
+                    currentQuantity: currentQuantity,
+                    history: history
+                });
+            }
+            
+            // Adicionar os novos produtos
+            newProducts.forEach(product => {
+                if (isOnline) {
+                    addProductToFirebase(product).then(id => {
+                        product.id = id;
+                        products.push(product);
+                        renderProducts();
+                    });
+                } else {
+                    // Gerar ID temporário para uso offline
+                    product.id = 'temp_' + Date.now();
+                    addToLocalStorage(product);
+                    pendingChanges.push({type: 'add', data: product});
+                    products.push(product);
+                }
+            });
+            
+            renderProducts();
+            alert(`Importação concluída! ${newProducts.length} produtos importados.`);
+        }
+
+        // Inicializar a aplicação
+        function initApp() {
+            // Primeiro carregar do localStorage para exibir algo rapidamente
+            loadFromLocalStorage();
+            renderProducts();
+            
+            // Depois tentar carregar do Firebase
+            loadProductsFromFirebase(() => {
+                renderProducts();
+            });
+        }
+
+        // Inicializar a aplicação quando o documento estiver carregado
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
