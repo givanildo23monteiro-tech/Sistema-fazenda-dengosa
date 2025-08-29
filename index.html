@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Produtos Congelados</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        
+        .btn-info {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #2980b9;
+        }
+        
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .products-table th, .products-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .products-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .products-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background-color: #f5f5f5;
+        }
+        
+        .quantity-btn.decrease {
+            color: var(--accent-color);
+        }
+        
+        .quantity-btn.increase {
+            color: var(--success-color);
+        }
+        
+        .quantity-input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .set-quantity-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .history-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .history-btn:hover {
+            background-color: #e67e22;
+        }
+        
+        .edit-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .edit-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .history-table th, .history-table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .history-table th {
+            background-color: #f5f5f5;
+            font-weight: 500;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .products-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .quantity-controls {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Controle de Produtos Congelados</h1>
+            <p>Gerencie o estoque dos seus produtos congelados com histórico completo</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar produto..." oninput="filterProducts()">
+            </div>
+            <div>
+                <input type="file" id="fileUpload" accept=".xlsx, .xls" style="display: none;">
+                <button class="btn btn-warning" onclick="document.getElementById('fileUpload').click()">Importar Excel</button>
+                <button class="btn btn-warning" id="exportBtn" onclick="exportToExcel()">Exportar para Excel</button>
+                <button class="btn btn-primary" id="addProductBtn" onclick="openAddModal()">Adicionar Produto</button>
+            </div>
+        </div>
+        
+        <table class="products-table" id="productsTable">
+            <thead>
+                <tr>
+                    <th>Fornecedor</th>
+                    <th>Produto</th>
+                    <th>Organização Ideal</th>
+                    <th>Quantidade Atual</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="productsTableBody">
+                <!-- Os produtos serão inseridos aqui via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Modal para adicionar/editar produto -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Adicionar Produto</h2>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label for="supplier">Fornecedor</label>
+                    <input type="text" id="supplier" required>
+                </div>
+                <div class="form-group">
+                    <label for="productName">Nome do Produto</label>
+                    <input type="text" id="productName" required>
+                </div>
+                <div class="form-group">
+                    <label for="organization">Organização Ideal</label>
+                    <input type="text" id="organization" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantidade Inicial</label>
+                    <input type="number" id="quantity" min="0" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-danger" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal para visualizar histórico -->
+    <div class="modal" id="historyModal">
+        <div class="modal-content">
+            <h2 id="historyTitle">Histórico do Produto</h2>
+            <div id="historyContent">
+                <!-- Conteúdo do histórico será inserido aqui -->
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-danger" onclick="closeHistoryModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>Sistema de Controle de Produtos Congelados com Histórico &copy; 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dados iniciais baseados na planilha com histórico
+        let products = [];
+
+        // Função para carregar produtos do localStorage ou usar os iniciais
+        function loadProducts() {
+            const storedProducts = localStorage.getItem('frozenProductsWithHistory');
+            if (storedProducts) {
+                return JSON.parse(storedProducts);
+            }
+            return [];
+        }
+
+        // Função para salvar produtos no localStorage
+        function saveProducts(products) {
+            localStorage.setItem('frozenProductsWithHistory', JSON.stringify(products));
+        }
+
+        // Função para renderizar os produtos na tabela
+        function renderProducts(productsToRender = products) {
+            const tableBody = document.querySelector('#productsTableBody');
+            tableBody.innerHTML = '';
+            
+            productsToRender.forEach(product => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${product.supplier}</td>
+                    <td>${product.name}</td>
+                    <td>${product.organization}</td>
+                    <td>${product.currentQuantity}</td>
+                    <td>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn decrease" onclick="decreaseQuantity(${product.id})">-</button>
+                            <input type="number" class="quantity-input" id="input-${product.id}" value="${product.currentQuantity}" min="0">
+                            <button class="quantity-btn increase" onclick="increaseQuantity(${product.id})">+</button>
+                            <button class="btn set-quantity-btn" onclick="setQuantity(${product.id})">Definir</button>
+                            <button class="btn history-btn" onclick="showHistory(${product.id})">Histórico</button>
+                            <button class="btn edit-btn" onclick="openEditModal(${product.id})">Editar</button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Função para filtrar produtos
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.supplier.toLowerCase().includes(searchTerm) || 
+                product.name.toLowerCase().includes(searchTerm)
+            );
+            renderProducts(filteredProducts);
+        }
+
+        // Função para diminuir quantidade
+        function decreaseQuantity(id) {
+            const product = products.find(p => p.id === id);
+            if (product && product.currentQuantity > 0) {
+                product.currentQuantity--;
+                updateProductHistory(product, 'diminuição');
+                saveProducts(products);
+                renderProducts();
+            }
+        }
+
+        // Função para aumentar quantidade
+        function increaseQuantity(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                product.currentQuantity++;
+                updateProductHistory(product, 'aumento');
+                saveProducts(products);
+                renderProducts();
+            }
+        }
+
+        // Função para definir quantidade específica
+        function setQuantity(id) {
+            const product = products.find(p => p.id === id);
+            const input = document.getElementById(`input-${id}`);
+            const newQuantity = parseInt(input.value);
+            
+            if (product && !isNaN(newQuantity) && newQuantity >= 0) {
+                const oldQuantity = product.currentQuantity;
+                product.currentQuantity = newQuantity;
+                
+                if (oldQuantity !== newQuantity) {
+                    const action = newQuantity > oldQuantity ? 'aumento' : 'diminuição';
+                    updateProductHistory(product, action);
+                    saveProducts(products);
+                    renderProducts();
+                }
+            }
+        }
+
+        // Função para atualizar o histórico do produto
+        function updateProductHistory(product, action) {
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0];
+            
+            product.history.push({
+                date: dateStr,
+                quantity: product.currentQuantity,
+                action: action
+            });
+        }
+
+        // Função para mostrar histórico
+        function showHistory(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                const historyContent = document.getElementById('historyContent');
+                historyContent.innerHTML = `
+                    <h3>${product.name} - ${product.supplier}</h3>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Quantidade</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${product.history.map(entry => `
+                                <tr>
+                                    <td>${entry.date}</td>
+                                    <td>${entry.quantity}</td>
+                                    <td>${entry.action || 'registro inicial'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                document.getElementById('historyModal').style.display = 'flex';
+            }
+        }
+
+        // Função para fechar modal de histórico
+        function closeHistoryModal() {
+            document.getElementById('historyModal').style.display = 'none';
+        }
+
+        // Função para abrir modal de adicionar produto
+        function openAddModal() {
+            document.getElementById('productId').value = '';
+            document.getElementById('supplier').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('organization').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('modalTitle').textContent = 'Adicionar Produto';
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        // Função para abrir modal de edição de produto
+        function openEditModal(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                document.getElementById('productId').value = product.id;
+                document.getElementById('supplier').value = product.supplier;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('organization').value = product.organization;
+                document.getElementById('quantity').value = product.currentQuantity;
+                document.getElementById('modalTitle').textContent = 'Editar Produto';
+                document.getElementById('productModal').style.display = 'flex';
+            }
+        }
+
+        // Função para fechar modal
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        // Função para processar o formulário de produto
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const productId = document.getElementById('productId').value;
+            const supplier = document.getElementById('supplier').value;
+            const productName = document.getElementById('productName').value;
+            const organization = document.getElementById('organization').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            
+            if (productId) {
+                // Editar produto existente
+                const product = products.find(p => p.id == productId);
+                if (product) {
+                    // Verificar se houve mudanças nos dados
+                    const changes = [];
+                    if (product.supplier !== supplier) changes.push(`Fornecedor: ${product.supplier} → ${supplier}`);
+                    if (product.name !== productName) changes.push(`Nome: ${product.name} → ${productName}`);
+                    if (product.organization !== organization) changes.push(`Organização: ${product.organization} → ${organization}`);
+                    if (product.currentQuantity !== quantity) changes.push(`Quantidade: ${product.currentQuantity} → ${quantity}`);
+                    
+                    // Aplicar as mudanças
+                    product.supplier = supplier;
+                    product.name = productName;
+                    product.organization = organization;
+                    product.currentQuantity = quantity;
+                    
+                    // Registrar no histórico se houver mudanças
+                    if (changes.length > 0) {
+                        updateProductHistory(product, `edição: ${changes.join(', ')}`);
+                    }
+                }
+            } else {
+                // Adicionar novo produto
+                const newProduct = {
+                    id: products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1,
+                    supplier: supplier,
+                    name: productName,
+                    organization: organization,
+                    currentQuantity: quantity,
+                    history: [{
+                        date: new Date().toISOString().split('T')[0],
+                        quantity: quantity,
+                        action: 'registro inicial'
+                    }]
+                };
+                
+                products.push(newProduct);
+            }
+            
+            saveProducts(products);
+            renderProducts();
+            closeModal();
+        });
+
+        // Função para exportar para Excel
+        function exportToExcel() {
+            // Criar uma nova planilha
+            const ws = XLSX.utils.json_to_sheet(products.map(p => ({
+                Fornecedor: p.supplier,
+                Produto: p.name,
+                Organização: p.organization,
+                Quantidade: p.currentQuantity
+            })));
+            
+            // Criar um novo workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Produtos Congelados");
+            
+            // Salvar o arquivo
+            XLSX.writeFile(wb, "controle_congelados.xlsx");
+        }
+
+        // Função para processar o arquivo Excel
+        document.getElementById('fileUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                
+                // Processar a primeira planilha
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                
+                // Processar os dados da planilha
+                processExcelData(jsonData);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        // Função para processar dados do Excel
+        function processExcelData(data) {
+            // Encontrar a linha com os cabeçalhos de data
+            let headerRowIndex = -1;
+            for (let i = 0; i < data.length; i++) {
+                if (data[i] && data[i].length > 0 && typeof data[i][0] === 'string' && data[i][0].includes('FORNECEDOR')) {
+                    headerRowIndex = i;
+                    break;
+                }
+            }
+            
+            if (headerRowIndex === -1) {
+                alert('Não foi possível identificar o formato da planilha.');
+                return;
+            }
+            
+            // Extrair as datas dos cabeçalhos
+            const dates = [];
+            for (let j = 3; j < data[headerRowIndex].length; j++) {
+                if (data[headerRowIndex][j] && typeof data[headerRowIndex][j] === 'string') {
+                    // Tentar converter a data
+                    const dateStr = data[headerRowIndex][j];
+                    dates.push(dateStr.split(' ')[0]); // Pegar apenas a parte da data
+                }
+            }
+            
+            // Processar os produtos
+            const newProducts = [];
+            for (let i = headerRowIndex + 1; i < data.length; i++) {
+                if (!data[i] || data[i].length < 4) continue;
+                
+                const supplier = data[i][1];
+                const productName = data[i][2];
+                const organization = data[i][3];
+                
+                if (!supplier || !productName) continue;
+                
+                // Extrair o histórico de quantidades
+                const history = [];
+                for (let j = 0; j < dates.length; j++) {
+                    const quantity = data[i][4 + j];
+                    if (quantity !== undefined && quantity !== null && quantity !== '') {
+                        // Converter valores como "2 cx" para números
+                        let qtyValue = quantity;
+                        if (typeof quantity === 'string') {
+                            if (quantity.includes('cx')) {
+                                qtyValue = parseInt(quantity) || 0;
+                            } else if (quantity.includes('*')) {
+                                // Calcular expressões como "=6*25"
+                                try {
+                                    qtyValue = eval(quantity.replace('=', ''));
+                                } catch (e) {
+                                    qtyValue = 0;
+                                }
+                            } else {
+                                qtyValue = parseFloat(quantity) || 0;
+                            }
+                        }
+                        
+                        history.push({
+                            date: dates[j],
+                            quantity: qtyValue,
+                            action: 'registro histórico'
+                        });
+                    }
+                }
+                
+                // Determinar a quantidade atual (último registro)
+                const currentQuantity = history.length > 0 ? history[history.length - 1].quantity : 0;
+                
+                newProducts.push({
+                    id: newProducts.length + 1,
+                    supplier: supplier,
+                    name: productName,
+                    organization: organization,
+                    currentQuantity: currentQuantity,
+                    history: history
+                });
+            }
+            
+            // Substituir os produtos atuais pelos importados
+            products = newProducts;
+            saveProducts(products);
+            renderProducts();
+            
+            alert(`Importação concluída! ${newProducts.length} produtos importados.`);
+        }
+
+        // Inicializar a aplicação
+        function initApp() {
+            products = loadProducts();
+            
+            // Se não houver produtos, importar da planilha fornecida
+            if (products.length === 0) {
+                // Dados da planilha fornecida
+                const excelData = [
+                    ["FORNECEDOR", "PRODUTO", "ORGANIZAÇÃO IDEAL", "2025-04-17 00:00:00", "2025-04-24 00:00:00", "2025-05-02 00:00:00", "2025-05-08 00:00:00", "2025-05-27 00:00:00", "2025-06-05 00:00:00", "2025-06-13 00:00:00", "2025-07-21 00:00:00", "2025-08-05 00:00:00", "2025-08-15 00:00:00"],
+                    ["POMELO", "CROISSANT 55G", "PCTE C/10 UNIDADES", 110.0, 10.0, 10.0, 10.0, 140.0, 118.0, 118.0, 59.0, 29.0, 19.0],
+                    ["POMELO", "MINI PÃO DE CHOCOLATE", "PCTE C/25 UNIDADES", 250.0, "=6*25", 125.0, 125.0, 75.0, 75.0, 75.0, 75.0, 30.0, 25.0],
+                    ["POMELO", "BAGUETTE RUSTIGUETTE", "PCTE C/05 UNIDADES", 25.0, 22.0, 22.0, 22.0, 15.0, 15.0, 15.0, 0.0, 0.0, 0.0],
+                    ["POMELO", "BAGUETTE GALICIA", "PCTE C/ 06 UNIDADES", 30.0, 11.0, 10.0, 10.0, 9.0, 11.0, 11.0, 10.0, 9.0, 5.0],
+                    ["BRAZ", "PIZZA MUSSARELA", "UNIDADE", 6.0, 2.0, 0.0, 0.0, 3.0, 3.0, 3.0, 0.0, 0.0, 0.0],
+                    ["BRAZ", "PIZZA BRÁZ ABOBRINHA", "UNIDADE", 5.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                    ["BRAZ", "PIZZA QUATRO QUEIJOS", "UNIDADE", 5.0, 1.0, 1.0, 1.0, 3.0, 3.0, 3.0, 1.0, 3.0, 3.0],
+                    ["BRAZ", "PIZZA PORTUGUESA", "UNIDADE", 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                    ["BRAZ", "PIZZA CALABRESA", "UNIDADE", 5.0, 3.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 0.0],
+                    ["ALMANARA", "ESFIHA CARNE FECHADA", "PCTE C/5 UNIDADES", 30.0, 10.0, 10.0, 8.0, 7.0, 6.0, 6.0, "2 cx", "2cx", "4cx"],
+                    ["ALMANARA", "ESFIHA QUEIJO ABERTA", "PCTE C/5 UNIDADES", 30.0, 11.0, 11.0, 11.0, 5.0, 5.0, 5.0, "1 cx", "1cx", "3cx"],
+                    ["ALMANARA", "ESFIHA ZATAR ABERTA-", "PCTE C/5 UNIDADES", 30.0, 17.0, 17.0, 17.0, 16.0, 16.0, 16.0, "10 cx", "10cx", "8cx"],
+                    ["SWIFT", "BOLINHO DE QUEIJO", "PACOTE", "", "", "", "", 7.0, 7.0, 7.0, "3 cx", 1.0, 0.0],
+                    ["APERITIVO", "PASTEL DE CARNE", "UNIDADE", "", "", "", "", 10.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                    ["CHURRASCO", "HAMBURGUER WAGYU", "CAIXINHA C/ 2 UNIDADES", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                    ["CHURRASCO", "HAMBURGUER PERDIZES", "UNIDADE", "", "", "", "", 10.0, 10.0, 10.0, 9.0, 9.0, 9.0],
+                    ["CHURRASCO", "PÃO DE HAMBURGUER", "UNIDADE", "", "", "", "", 14.0, 14.0, 14.0, 14.0, 14.0, 14.0],
+                    ["CHURRASCO", "QUEIJO CHEDDAR PCTE", "PCTE", 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                    ["CHURRASCO", "PÃO DE ALHO SANTA MASSA", "UNIDADE", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                    ["CHURRASCO", "QUEIJO COALHO QUATÁ", "UNIDADE", 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 4.0, 4.0],
+                    ["CHURRASCO", "LINGUIÇA BOMBINHA", "UNIDADE", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                    ["CHURRASCO", "DRUMET DE FRANGO", "UNIDADE", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0],
+                    ["CHURRASCO", "FILÉ DE FRANGO", "UNIDADE", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0],
+                    ["NATURAL BRASIL", "ÁGUA DE COCO - 1 L", "UNIDADE", 12.0, 6.0, 4.0, 4.0, 4.0, 6.0, 4.0, 1.0, 4.0, 6.0],
+                    ["KIBOM", "SKINBOM", "UNIDADE", "", "", "", "", "", "", "", "", "5CX", "8CX"],
+                    ["FINA", "TOSCANA", "UNIDADE", "", "", "", "", "", "", "", "", "1PC", "1PC"],
+                    ["BRASA", "TOSCANA", "UNIDADE", "", "", "", "", "", "", "", "", "1PC", "1PC"],
+                    ["SWIFT", "TOSCANA", "UNIDADE", "", "", "", "", "", "", "", "", "1PC", "1PC"],
+                    ["SADIA", "TOSCANA", "UNIDADE", "", "", "", "", "", "", "", "", "1PC", "1PC"],
+                    ["OURO", "PICANHA", "UNIDADE", "", "", "", "", "", "", "", "", "1PC", "1PC"],
+                    ["SWIFT", "PICANHA", "UNIDADE", "", "", "", "", "", "", "", "", "1PC", "1PC"]
+                ];
+                
+                processExcelData(excelData);
+            } else {
+                renderProducts();
+            }
+        }
+
+        // Inicializar a aplicação quando o documento estiver carregado
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
