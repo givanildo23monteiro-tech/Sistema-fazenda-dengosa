@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Produtos Congelados</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Adicionando Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -473,8 +470,13 @@
         </div>
     </footer>
 
-    <script>
-        // Configuração do Firebase com suas credenciais
+    <!-- Firebase via módulos ES (nova API) -->
+    <script type="module">
+        // Importações da nova API modular do Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { getDatabase, ref, set, onValue, remove } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
+
+        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAOCOZGE1Gw5WP03NEWBOYAm0bLcMXxYeo",
             authDomain: "sistema-66a68.firebaseapp.com",
@@ -485,548 +487,60 @@
             appId: "1:760244638816:web:52200f4caf63c9e3f19f05",
             measurementId: "G-GHZTH43VQN"
         };
-        
+
         // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        
-        // Dados iniciais baseados na planilha fornecida
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Dados iniciais (mesmos do sistema original)
         const initialProducts = [
-            {
-                id: "1",
-                supplier: "POMELO",
-                name: "CROISSANT 55G",
-                organization: "PCTE C/10 UNIDADES",
-                currentQuantity: 19.0,
-                history: [
-                    { date: "2025-04-17", quantity: 110.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 140.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 118.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 118.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 59.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 29.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 19.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "2",
-                supplier: "POMELO",
-                name: "MINI PÃO DE CHOCOLATE",
-                organization: "PCTE C/25 UNIDADES",
-                currentQuantity: 25.0,
-                history: [
-                    { date: "2025-04-17", quantity: 250.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 150.0, action: "registro histórico" }, // =6*25
-                    { date: "2025-05-02", quantity: 125.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 125.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 75.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 75.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 75.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 75.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 30.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 25.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "3",
-                supplier: "POMELO",
-                name: "BAGUETTE RUSTIGUETTE",
-                organization: "PCTE C/05 UNIDADES",
-                currentQuantity: 0.0,
-                history: [
-                    { date: "2025-04-17", quantity: 25.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 22.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 22.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 22.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 15.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 15.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 15.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "4",
-                supplier: "POMELO",
-                name: "BAGUETTE GALICIA",
-                organization: "PCTE C/ 06 UNIDADES",
-                currentQuantity: 5.0,
-                history: [
-                    { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 11.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 9.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 11.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 11.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 9.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 5.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "5",
-                supplier: "BRAZ",
-                name: "PIZZA MUSSARELA",
-                organization: "UNIDADE",
-                currentQuantity: 0.0,
-                history: [
-                    { date: "2025-04-17", quantity: 6.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 3.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 3.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 3.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "6",
-                supplier: "BRAZ",
-                name: "PIZZA BRÁZ ABOBRINHA",
-                organization: "UNIDADE",
-                currentQuantity: 2.0,
-                history: [
-                    { date: "2025-04-17", quantity: 5.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 2.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "7",
-                supplier: "BRAZ",
-                name: "PIZZA QUATRO QUEIJOS",
-                organization: "UNIDADE",
-                currentQuantity: 3.0,
-                history: [
-                    { date: "2025-04-17", quantity: 5.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 3.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 3.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 3.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 3.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 3.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "8",
-                supplier: "BRAZ",
-                name: "PIZZA PORTUGUESA",
-                organization: "UNIDADE",
-                currentQuantity: 1.0,
-                history: [
-                    { date: "2025-04-17", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "9",
-                supplier: "BRAZ",
-                name: "PIZZA CALABRESA",
-                organization: "UNIDADE",
-                currentQuantity: 0.0,
-                history: [
-                    { date: "2025-04-17", quantity: 5.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 3.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "10",
-                supplier: "ALMANARA",
-                name: "ESFIHA CARNE FECHADA",
-                organization: "PCTE C/5 UNIDADES",
-                currentQuantity: 4.0, // 4cx
-                history: [
-                    { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 8.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 7.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 6.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 6.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" }, // 2 cx
-                    { date: "2025-08-05", quantity: 2.0, action: "registro histórico" }, // 2cx
-                    { date: "2025-08-15", quantity: 4.0, action: "registro histórico" } // 4cx
-                ]
-            },
-            {
-                id: "11",
-                supplier: "ALMANARA",
-                name: "ESFIHA QUEIJO ABERTA",
-                organization: "PCTE C/5 UNIDADES",
-                currentQuantity: 3.0, // 3cx
-                history: [
-                    { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 11.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 11.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 11.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 5.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 5.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 5.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, // 1 cx
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1cx
-                    { date: "2025-08-15", quantity: 3.0, action: "registro histórico" } // 3cx
-                ]
-            },
-            {
-                id: "12",
-                supplier: "ALMANARA",
-                name: "ESFIHA ZATAR ABERTA-",
-                organization: "PCTE C/5 UNIDADES",
-                currentQuantity: 8.0, // 8cx
-                history: [
-                    { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 17.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 17.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 17.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 16.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 16.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 16.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 10.0, action: "registro histórico" }, // 10 cx
-                    { date: "2025-08-05", quantity: 10.0, action: "registro histórico" }, // 10cx
-                    { date: "2025-08-15", quantity: 8.0, action: "registro histórico" } // 8cx
-                ]
-            },
-            {
-                id: "13",
-                supplier: "SWIFT",
-                name: "BOLINHO DE QUEIJO",
-                organization: "PACOTE",
-                currentQuantity: 0.0,
-                history: [
-                    { date: "2025-05-27", quantity: 7.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 7.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 7.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 3.0, action: "registro histórico" }, // 3 cx
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "14",
-                supplier: "APERITIVO",
-                name: "PASTEL DE CARNE",
-                organization: "UNIDADE",
-                currentQuantity: 0.0,
-                history: [
-                    { date: "2025-05-27", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "15",
-                supplier: "CHURRASCO",
-                name: "HAMBURGUER WAGYU",
-                organization: "CAIXINHA C/ 2 UNIDADES",
-                currentQuantity: 1.0,
-                history: [
-                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "16",
-                supplier: "CHURRASCO",
-                name: "HAMBURGUER PERDIZES",
-                organization: "UNIDADE",
-                currentQuantity: 9.0,
-                history: [
-                    { date: "2025-05-27", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 10.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 9.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 9.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 9.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "17",
-                supplier: "CHURRASCO",
-                name: "PÃO DE HAMBURGUER",
-                organization: "UNIDADE",
-                currentQuantity: 14.0,
-                history: [
-                    { date: "2025-05-27", quantity: 14.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 14.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 14.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 14.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 14.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 14.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "18",
-                supplier: "CHURRASCO",
-                name: "QUEIJO CHEDDAR PCTE",
-                organization: "PCTE",
-                currentQuantity: 2.0,
-                history: [
-                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 2.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "19",
-                supplier: "CHURRASCO",
-                name: "PÃO DE ALHO SANTA MASSA",
-                organization: "UNIDADE",
-                currentQuantity: 1.0,
-                history: [
-                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "20",
-                supplier: "CHURRASCO",
-                name: "QUEIJO COALHO QUATÁ",
-                organization: "UNIDADE",
-                currentQuantity: 4.0,
-                history: [
-                    { date: "2025-04-17", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 4.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 4.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "21",
-                supplier: "CHURRASCO",
-                name: "LINGUIÇA BOMBINHA",
-                organization: "UNIDADE",
-                currentQuantity: 1.0,
-                history: [
-                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "22",
-                supplier: "CHURRASCO",
-                name: "DRUMET DE FRANGO",
-                organization: "UNIDADE",
-                currentQuantity: 0.0,
-                history: [
-                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "23",
-                supplier: "CHURRASCO",
-                name: "FILÉ DE FRANGO",
-                organization: "UNIDADE",
-                currentQuantity: 0.0,
-                history: [
-                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "24",
-                supplier: "NATURAL BRASIL",
-                name: "ÁGUA DE COCO - 1 L",
-                organization: "UNIDADE",
-                currentQuantity: 6.0,
-                history: [
-                    { date: "2025-04-17", quantity: 12.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 6.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 4.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 4.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 4.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 6.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity: 4.0, action: "registro histórico" },
-                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-08-05", quantity: 4.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 6.0, action: "registro histórico" }
-                ]
-            },
-            {
-                id: "25",
-                supplier: "KIBOM",
-                name: "SKINBOM",
-                organization: "UNIDADE",
-                currentQuantity: 8.0, // 8CX
-                history: [
-                    { date: "2025-08-05", quantity: 5.0, action: "registro histórico" }, // 5CX
-                    { date: "2025-08-15", quantity: 8.0, action: "registro histórico" } // 8CX
-                ]
-            },
-            {
-                id: "26",
-                supplier: "FINA",
-                name: "TOSCANA",
-                organization: "UNIDADE",
-                currentQuantity: 1.0, // 1PC
-                history: [
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
-                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
-                ]
-            },
-            {
-                id: "27",
-                supplier: "BRASA",
-                name: "TOSCANA",
-                organization: "UNIDADE",
-                currentQuantity: 1.0, // 1PC
-                history: [
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
-                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
-                ]
-            },
-            {
-                id: "28",
-                supplier: "SWIFT",
-                name: "TOSCANA",
-                organization: "UNIDADE",
-                currentQuantity: 1.0, // 1PC
-                history: [
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
-                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
-                ]
-            },
-            {
-                id: "29",
-                supplier: "SADIA",
-                name: "TOSCANA",
-                organization: "UNIDADE",
-                currentQuantity: 1.0, // 1PC
-                history: [
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
-                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
-                ]
-            },
-            {
-                id: "30",
-                supplier: "OURO",
-                name: "PICANHA",
-                organization: "UNIDADE",
-                currentQuantity: 1.0, // 1PC
-                history: [
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
-                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
-                ]
-            },
-            {
-                id: "31",
-                supplier: "SWIFT",
-                name: "PICANHA",
-                organization: "UNIDADE",
-                currentQuantity: 1.0, // 1PC
-                history: [
-                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
-                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
-                ]
-            }
+            { id: "1", supplier: "POMELO", name: "CROISSANT 55G", organization: "PCTE C/10 UNIDADES", currentQuantity: 19.0, history: [{ date: "2025-04-17", quantity: 110.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 10.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 10.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 10.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 140.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 118.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 118.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 59.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 29.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 19.0, action: "registro histórico" }] },
+            { id: "2", supplier: "POMELO", name: "MINI PÃO DE CHOCOLATE", organization: "PCTE C/25 UNIDADES", currentQuantity: 25.0, history: [{ date: "2025-04-17", quantity: 250.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 150.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 125.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 125.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 75.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 75.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 75.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 75.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 30.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 25.0, action: "registro histórico" }] },
+            { id: "3", supplier: "POMELO", name: "BAGUETTE RUSTIGUETTE", organization: "PCTE C/05 UNIDADES", currentQuantity: 0.0, history: [{ date: "2025-04-17", quantity: 25.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 22.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 22.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 22.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 15.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 15.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 15.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 0.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 0.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }] },
+            { id: "4", supplier: "POMELO", name: "BAGUETTE GALICIA", organization: "PCTE C/ 06 UNIDADES", currentQuantity: 5.0, history: [{ date: "2025-04-17", quantity: 30.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 11.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 10.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 10.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 9.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 11.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 11.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 10.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 9.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 5.0, action: "registro histórico" }] },
+            { id: "5", supplier: "BRAZ", name: "PIZZA MUSSARELA", organization: "UNIDADE", currentQuantity: 0.0, history: [{ date: "2025-04-17", quantity: 6.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 2.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 0.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 0.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 3.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 3.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 3.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 0.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 0.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }] },
+            { id: "6", supplier: "BRAZ", name: "PIZZA BRÁZ ABOBRINHA", organization: "UNIDADE", currentQuantity: 2.0, history: [{ date: "2025-04-17", quantity: 5.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 2.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 2.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 2.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 2.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 2.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 2.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 2.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 2.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 2.0, action: "registro histórico" }] },
+            { id: "7", supplier: "BRAZ", name: "PIZZA QUATRO QUEIJOS", organization: "UNIDADE", currentQuantity: 3.0, history: [{ date: "2025-04-17", quantity: 5.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 3.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 3.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 3.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 3.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 3.0, action: "registro histórico" }] },
+            { id: "8", supplier: "BRAZ", name: "PIZZA PORTUGUESA", organization: "UNIDADE", currentQuantity: 1.0, history: [{ date: "2025-04-17", quantity: 0.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 0.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 0.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 0.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 1.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }] },
+            { id: "9", supplier: "BRAZ", name: "PIZZA CALABRESA", organization: "UNIDADE", currentQuantity: 0.0, history: [{ date: "2025-04-17", quantity: 5.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 3.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 2.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 2.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 2.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }] },
+            { id: "10", supplier: "ALMANARA", name: "ESFIHA CARNE FECHADA", organization: "PCTE C/5 UNIDADES", currentQuantity: 4.0, history: [{ date: "2025-04-17", quantity: 30.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 10.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 10.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 8.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 7.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 6.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 6.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 2.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 2.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 4.0, action: "registro histórico" }] },
+            { id: "11", supplier: "ALMANARA", name: "ESFIHA QUEIJO ABERTA", organization: "PCTE C/5 UNIDADES", currentQuantity: 3.0, history: [{ date: "2025-04-17", quantity: 30.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 11.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 11.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 11.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 5.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 5.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 5.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 3.0, action: "registro histórico" }] },
+            { id: "12", supplier: "ALMANARA", name: "ESFIHA ZATAR ABERTA-", organization: "PCTE C/5 UNIDADES", currentQuantity: 8.0, history: [{ date: "2025-04-17", quantity: 30.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 17.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 17.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 17.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 16.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 16.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 16.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 10.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 10.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 8.0, action: "registro histórico" }] },
+            { id: "13", supplier: "SWIFT", name: "BOLINHO DE QUEIJO", organization: "PACOTE", currentQuantity: 0.0, history: [{ date: "2025-05-27", quantity: 7.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 7.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 7.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 3.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }] },
+            { id: "14", supplier: "APERITIVO", name: "PASTEL DE CARNE", organization: "UNIDADE", currentQuantity: 0.0, history: [{ date: "2025-05-27", quantity: 10.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 0.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 0.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 0.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 0.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }] },
+            { id: "15", supplier: "CHURRASCO", name: "HAMBURGUER WAGYU", organization: "CAIXINHA C/ 2 UNIDADES", currentQuantity: 1.0, history: [{ date: "2025-04-17", quantity: 1.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 1.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }] },
+            { id: "16", supplier: "CHURRASCO", name: "HAMBURGUER PERDIZES", organization: "UNIDADE", currentQuantity: 9.0, history: [{ date: "2025-05-27", quantity: 10.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 10.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 10.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 9.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 9.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 9.0, action: "registro histórico" }] },
+            { id: "17", supplier: "CHURRASCO", name: "PÃO DE HAMBURGUER", organization: "UNIDADE", currentQuantity: 14.0, history: [{ date: "2025-05-27", quantity: 14.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 14.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 14.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 14.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 14.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 14.0, action: "registro histórico" }] },
+            { id: "18", supplier: "CHURRASCO", name: "QUEIJO CHEDDAR PCTE", organization: "PCTE", currentQuantity: 2.0, history: [{ date: "2025-04-17", quantity: 1.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 2.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 2.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 2.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 2.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 2.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 2.0, action: "registro histórico" }] },
+            { id: "19", supplier: "CHURRASCO", name: "PÃO DE ALHO SANTA MASSA", organization: "UNIDADE", currentQuantity: 1.0, history: [{ date: "2025-04-17", quantity: 1.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 1.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }] },
+            { id: "20", supplier: "CHURRASCO", name: "QUEIJO COALHO QUATÁ", organization: "UNIDADE", currentQuantity: 4.0, history: [{ date: "2025-04-17", quantity: 2.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 2.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 2.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 2.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 2.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 2.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 2.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 2.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 4.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 4.0, action: "registro histórico" }] },
+            { id: "21", supplier: "CHURRASCO", name: "LINGUIÇA BOMBINHA", organization: "UNIDADE", currentQuantity: 1.0, history: [{ date: "2025-04-17", quantity: 1.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 1.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }] },
+            { id: "22", supplier: "CHURRASCO", name: "DRUMET DE FRANGO", organization: "UNIDADE", currentQuantity: 0.0, history: [{ date: "2025-04-17", quantity: 1.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 1.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 0.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }] },
+            { id: "23", supplier: "CHURRASCO", name: "FILÉ DE FRANGO", organization: "UNIDADE", currentQuantity: 0.0, history: [{ date: "2025-04-17", quantity: 1.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 1.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 1.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 0.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 0.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }] },
+            { id: "24", supplier: "NATURAL BRASIL", name: "ÁGUA DE COCO - 1 L", organization: "UNIDADE", currentQuantity: 6.0, history: [{ date: "2025-04-17", quantity: 12.0, action: "registro histórico" }, { date: "2025-04-24", quantity: 6.0, action: "registro histórico" }, { date: "2025-05-02", quantity: 4.0, action: "registro histórico" }, { date: "2025-05-08", quantity: 4.0, action: "registro histórico" }, { date: "2025-05-27", quantity: 4.0, action: "registro histórico" }, { date: "2025-06-05", quantity: 6.0, action: "registro histórico" }, { date: "2025-06-13", quantity: 4.0, action: "registro histórico" }, { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-05", quantity: 4.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 6.0, action: "registro histórico" }] },
+            { id: "25", supplier: "KIBOM", name: "SKINBOM", organization: "UNIDADE", currentQuantity: 8.0, history: [{ date: "2025-08-05", quantity: 5.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 8.0, action: "registro histórico" }] },
+            { id: "26", supplier: "FINA", name: "TOSCANA", organization: "UNIDADE", currentQuantity: 1.0, history: [{ date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }] },
+            { id: "27", supplier: "BRASA", name: "TOSCANA", organization: "UNIDADE", currentQuantity: 1.0, history: [{ date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }] },
+            { id: "28", supplier: "SWIFT", name: "TOSCANA", organization: "UNIDADE", currentQuantity: 1.0, history: [{ date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }] },
+            { id: "29", supplier: "SADIA", name: "TOSCANA", organization: "UNIDADE", currentQuantity: 1.0, history: [{ date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }] },
+            { id: "30", supplier: "OURO", name: "PICANHA", organization: "UNIDADE", currentQuantity: 1.0, history: [{ date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }] },
+            { id: "31", supplier: "SWIFT", name: "PICANHA", organization: "UNIDADE", currentQuantity: 1.0, history: [{ date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }] }
         ];
 
+        // Variáveis globais do sistema
         let products = [];
         let isOnline = false;
         let pendingChanges = [];
         let productToDelete = null;
 
-        // Função para atualizar o status de conexão
+        // Atualizar status de conexão
         function updateConnectionStatus(connected) {
             isOnline = connected;
             const indicator = document.getElementById('syncIndicator');
             const text = document.getElementById('syncText');
-            
             if (connected) {
                 indicator.className = 'sync-indicator sync-online';
                 text.textContent = 'Conectado e sincronizado';
-                
-                // Processar mudanças pendentes se houver
                 processPendingChanges();
             } else {
                 indicator.className = 'sync-indicator sync-offline';
@@ -1034,189 +548,21 @@
             }
         }
 
-        // Verificar status de conexão
-        firebase.database().ref('.info/connected').on('value', function(snapshot) {
-            updateConnectionStatus(snapshot.val() === true);
+        // Monitorar conexão com o Firebase
+        const connectedRef = ref(database, '.info/connected');
+        onValue(connectedRef, (snap) => {
+            updateConnectionStatus(snap.val() === true);
         });
 
-        // Função para carregar produtos do Firebase
-        function loadProductsFromFirebase(callback) {
-            const productsRef = database.ref('products');
-            
-            productsRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    // Converter objeto do Firebase em array
-                    products = Object.keys(data).map(key => {
-                        return {
-                            id: key,
-                            ...data[key]
-                        };
-                    });
-                    
-                    // Ordenar produtos por ID
-                    products.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-                    
-                    if (callback) callback();
-                } else {
-                    // Se não houver dados no Firebase, usar dados iniciais
-                    initializeWithDefaultData();
-                    if (callback) callback();
-                }
-            }, (error) => {
-                console.error("Erro ao carregar dados:", error);
-                // Em caso de erro, tentar carregar do localStorage como fallback
-                loadFromLocalStorage();
-                if (callback) callback();
-            });
-        }
-
-        // Função para inicializar com dados padrão
-        function initializeWithDefaultData() {
-            // Verificar se já temos dados no localStorage
-            const storedProducts = localStorage.getItem('frozenProductsWithHistory');
-            
-            if (!storedProducts) {
-                // Se não houver dados salvos, usar os dados iniciais da planilha
-                products = [...initialProducts];
-                saveToLocalStorage(products);
-                
-                // Salvar também no Firebase se estiver online
-                if (isOnline) {
-                    saveProductsToFirebase(products);
-                }
-            } else {
-                // Carregar dados do localStorage
-                loadFromLocalStorage();
-            }
-        }
-
-        // Função para salvar produtos no Firebase
-        function saveProductsToFirebase(products) {
-            // Converter array para objeto para o Firebase
-            const productsObj = {};
-            products.forEach(product => {
-                productsObj[product.id] = product;
-            });
-            
-            return database.ref('products').set(productsObj)
-                .then(() => {
-                    console.log("Dados salvos no Firebase com sucesso");
-                    // Também salvar no localStorage como backup
-                    saveToLocalStorage(products);
-                    return true;
-                })
-                .catch((error) => {
-                    console.error("Erro ao salvar no Firebase:", error);
-                    // Se falhar, salvar apenas no localStorage e marcar como pendente
-                    saveToLocalStorage(products);
-                    pendingChanges.push({type: 'fullUpdate', data: products});
-                    return false;
-                });
-        }
-
-        // Função para atualizar um produto específico no Firebase
-        function updateProductInFirebase(product) {
-            return database.ref('products/' + product.id).set(product)
-                .then(() => {
-                    console.log("Produto atualizado no Firebase:", product.id);
-                    // Atualizar também no localStorage
-                    updateInLocalStorage(product);
-                    return true;
-                })
-                .catch((error) => {
-                    console.error("Erro ao atualizar produto no Firebase:", error);
-                    // Se falhar, salvar no localStorage e marcar como pendente
-                    updateInLocalStorage(product);
-                    pendingChanges.push({type: 'update', data: product});
-                    return false;
-                });
-        }
-
-        // Função para adicionar um novo produto no Firebase
-        function addProductToFirebase(product) {
-            // Gerar um ID único usando o timestamp
-            const newId = Date.now().toString();
-            product.id = newId;
-            
-            return database.ref('products/' + newId).set(product)
-                .then(() => {
-                    console.log("Produto adicionado ao Firebase:", newId);
-                    // Adicionar também no localStorage
-                    addToLocalStorage(product);
-                    return newId;
-                })
-                .catch((error) => {
-                    console.error("Erro ao adicionar produto no Firebase:", error);
-                    // Se falhar, salvar no localStorage e marcar como pendente
-                    addToLocalStorage(product);
-                    pendingChanges.push({type: 'add', data: product});
-                    return newId;
-                });
-        }
-
-        // Função para excluir um produto do Firebase
-        function deleteProductFromFirebase(productId) {
-            return database.ref('products/' + productId).remove()
-                .then(() => {
-                    console.log("Produto excluído do Firebase:", productId);
-                    // Remover também do localStorage
-                    removeFromLocalStorage(productId);
-                    return true;
-                })
-                .catch((error) => {
-                    console.error("Erro ao excluir produto do Firebase:", error);
-                    // Se falhar, remover do localStorage e marcar como pendente
-                    removeFromLocalStorage(productId);
-                    pendingChanges.push({type: 'delete', data: {id: productId}});
-                    return false;
-                });
-        }
-
-        // Função para processar mudanças pendentes
-        function processPendingChanges() {
-            if (pendingChanges.length === 0 || !isOnline) return;
-            
-            console.log("Processando", pendingChanges.length, "mudanças pendentes");
-            
-            // Processar cada mudança pendente
-            const newPendingChanges = [];
-            
-            pendingChanges.forEach(change => {
-                let success = false;
-                
-                switch(change.type) {
-                    case 'fullUpdate':
-                        success = saveProductsToFirebase(change.data);
-                        break;
-                    case 'update':
-                        success = updateProductInFirebase(change.data);
-                        break;
-                    case 'add':
-                        success = addProductToFirebase(change.data) !== null;
-                        break;
-                    case 'delete':
-                        success = deleteProductFromFirebase(change.data.id);
-                        break;
-                }
-                
-                if (!success) {
-                    newPendingChanges.push(change);
-                }
-            });
-            
-            pendingChanges = newPendingChanges;
-        }
-
-        // Funções para localStorage (como fallback)
-        function saveToLocalStorage(products) {
-            localStorage.setItem('frozenProductsWithHistory', JSON.stringify(products));
+        // Funções de persistência local (fallback)
+        function saveToLocalStorage(data) {
+            localStorage.setItem('frozenProductsWithHistory', JSON.stringify(data));
         }
 
         function loadFromLocalStorage() {
-            const storedProducts = localStorage.getItem('frozenProductsWithHistory');
-            if (storedProducts) {
-                products = JSON.parse(storedProducts);
+            const stored = localStorage.getItem('frozenProductsWithHistory');
+            if (stored) {
+                products = JSON.parse(stored);
             }
         }
 
@@ -1241,20 +587,134 @@
             }
         }
 
-        // Função para renderizar os produtos na tabela
+        // Funções de sincronização com o Firebase
+        async function saveProductsToFirebase(productsArray) {
+            const productsObj = {};
+            productsArray.forEach(p => { productsObj[p.id] = p; });
+            try {
+                await set(ref(database, 'products'), productsObj);
+                console.log("Dados salvos no Firebase com sucesso");
+                saveToLocalStorage(productsArray);
+                return true;
+            } catch (error) {
+                console.error("Erro ao salvar no Firebase:", error);
+                saveToLocalStorage(productsArray);
+                pendingChanges.push({ type: 'fullUpdate', data: productsArray });
+                return false;
+            }
+        }
+
+        async function updateProductInFirebase(product) {
+            try {
+                await set(ref(database, 'products/' + product.id), product);
+                console.log("Produto atualizado no Firebase:", product.id);
+                updateInLocalStorage(product);
+                return true;
+            } catch (error) {
+                console.error("Erro ao atualizar produto no Firebase:", error);
+                updateInLocalStorage(product);
+                pendingChanges.push({ type: 'update', data: product });
+                return false;
+            }
+        }
+
+        async function addProductToFirebase(product) {
+            const newId = Date.now().toString();
+            product.id = newId;
+            try {
+                await set(ref(database, 'products/' + newId), product);
+                console.log("Produto adicionado ao Firebase:", newId);
+                addToLocalStorage(product);
+                return newId;
+            } catch (error) {
+                console.error("Erro ao adicionar produto no Firebase:", error);
+                addToLocalStorage(product);
+                pendingChanges.push({ type: 'add', data: product });
+                return newId;
+            }
+        }
+
+        async function deleteProductFromFirebase(productId) {
+            try {
+                await remove(ref(database, 'products/' + productId));
+                console.log("Produto excluído do Firebase:", productId);
+                removeFromLocalStorage(productId);
+                return true;
+            } catch (error) {
+                console.error("Erro ao excluir produto do Firebase:", error);
+                removeFromLocalStorage(productId);
+                pendingChanges.push({ type: 'delete', data: { id: productId } });
+                return false;
+            }
+        }
+
+        function processPendingChanges() {
+            if (pendingChanges.length === 0 || !isOnline) return;
+            console.log("Processando", pendingChanges.length, "mudanças pendentes");
+            const newPending = [];
+            pendingChanges.forEach(change => {
+                let success = false;
+                switch (change.type) {
+                    case 'fullUpdate':
+                        success = saveProductsToFirebase(change.data);
+                        break;
+                    case 'update':
+                        success = updateProductInFirebase(change.data);
+                        break;
+                    case 'add':
+                        success = addProductToFirebase(change.data) !== null;
+                        break;
+                    case 'delete':
+                        success = deleteProductFromFirebase(change.data.id);
+                        break;
+                }
+                if (!success) newPending.push(change);
+            });
+            pendingChanges = newPending;
+        }
+
+        // Carregar produtos do Firebase
+        function loadProductsFromFirebase(callback) {
+            const productsRef = ref(database, 'products');
+            onValue(productsRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    products = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                    products.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+                } else {
+                    initializeWithDefaultData();
+                }
+                if (callback) callback();
+            }, (error) => {
+                console.error("Erro ao carregar dados:", error);
+                loadFromLocalStorage();
+                if (callback) callback();
+            });
+        }
+
+        function initializeWithDefaultData() {
+            const stored = localStorage.getItem('frozenProductsWithHistory');
+            if (!stored) {
+                products = [...initialProducts];
+                saveToLocalStorage(products);
+                if (isOnline) {
+                    saveProductsToFirebase(products);
+                }
+            } else {
+                loadFromLocalStorage();
+            }
+        }
+
+        // Renderização da tabela
         function renderProducts(productsToRender = products) {
             const tableBody = document.querySelector('#productsTableBody');
-            
             if (productsToRender.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="5" class="loading">Nenhum produto encontrado</td></tr>';
                 return;
             }
-            
             tableBody.innerHTML = '';
-            
             productsToRender.forEach(product => {
                 const row = document.createElement('tr');
-                
                 row.innerHTML = `
                     <td>${product.supplier}</td>
                     <td>${product.name}</td>
@@ -1272,93 +732,16 @@
                         </div>
                     </td>
                 `;
-                
                 tableBody.appendChild(row);
             });
         }
 
-        // Função para filtrar produtos
-        function filterProducts() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filteredProducts = products.filter(product => 
-                product.supplier.toLowerCase().includes(searchTerm) || 
-                product.name.toLowerCase().includes(searchTerm)
-            );
-            renderProducts(filteredProducts);
-        }
-
-        // Função para diminuir quantidade
-        function decreaseQuantity(id) {
-            const product = products.find(p => p.id === id);
-            if (product && product.currentQuantity > 0) {
-                product.currentQuantity--;
-                updateProductHistory(product, 'diminuição');
-                
-                if (isOnline) {
-                    updateProductInFirebase(product);
-                } else {
-                    updateInLocalStorage(product);
-                    pendingChanges.push({type: 'update', data: product});
-                }
-                
-                renderProducts();
-            }
-        }
-
-        // Função para aumentar quantidade
-        function increaseQuantity(id) {
-            const product = products.find(p => p.id === id);
-            if (product) {
-                product.currentQuantity++;
-                updateProductHistory(product, 'aumento');
-                
-                if (isOnline) {
-                    updateProductInFirebase(product);
-                } else {
-                    updateInLocalStorage(product);
-                    pendingChanges.push({type: 'update', data: product});
-                }
-                
-                renderProducts();
-            }
-        }
-
-        // Função para definir quantidade específica
-        function setQuantity(id) {
-            const product = products.find(p => p.id === id);
-            const input = document.getElementById(`input-${id}`);
-            const newQuantity = parseInt(input.value);
-            
-            if (product && !isNaN(newQuantity) && newQuantity >= 0) {
-                const oldQuantity = product.currentQuantity;
-                product.currentQuantity = newQuantity;
-                
-                if (oldQuantity !== newQuantity) {
-                    const action = newQuantity > oldQuantity ? 'aumento' : 'diminuição';
-                    updateProductHistory(product, action);
-                    
-                    if (isOnline) {
-                        updateProductInFirebase(product);
-                    } else {
-                        updateInLocalStorage(product);
-                        pendingChanges.push({type: 'update', data: product});
-                    }
-                    
-                    renderProducts();
-                }
-            }
-        }
-
-        // Função para atualizar o histórico do produto
+        // Funções de manipulação de quantidade
         function updateProductHistory(product, action) {
-            const today = new Date();
-            const dateStr = today.toISOString().split('T')[0];
-            const timeStr = today.toTimeString().split(' ')[0];
-            
-            if (!product.history) {
-                product.history = [];
-            }
-            
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const timeStr = now.toTimeString().split(' ')[0];
+            if (!product.history) product.history = [];
             product.history.push({
                 date: `${dateStr} ${timeStr}`,
                 quantity: product.currentQuantity,
@@ -1366,99 +749,117 @@
             });
         }
 
-        // Função para mostrar histórico
-        function showHistory(id) {
-            const product = products.find(p => p.id === id);
-            if (product) {
-                const historyContent = document.getElementById('historyContent');
-                
-                let historyHTML = `
-                    <h3>${product.name} - ${product.supplier}</h3>
-                    <p>Quantidade atual: <strong>${product.currentQuantity}</strong></p>
-                `;
-                
-                if (product.history && product.history.length > 0) {
-                    historyHTML += `
-                        <table class="history-table">
-                            <thead>
-                                <tr>
-                                    <th>Data/Hora</th>
-                                    <th>Quantidade</th>
-                                    <th>Ação</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${product.history.map(entry => `
-                                    <tr>
-                                        <td>${entry.date}</td>
-                                        <td>${entry.quantity}</td>
-                                        <td>${entry.action || 'registro inicial'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
-                } else {
-                    historyHTML += '<p>Nenhum histórico disponível para este produto.</p>';
-                }
-                
-                historyContent.innerHTML = historyHTML;
-                document.getElementById('historyModal').style.display = 'flex';
+        async function applyProductUpdate(product) {
+            if (isOnline) {
+                await updateProductInFirebase(product);
+            } else {
+                updateInLocalStorage(product);
+                pendingChanges.push({ type: 'update', data: product });
             }
         }
 
-        // Função para fechar modal de histórico
-        function closeHistoryModal() {
-            document.getElementById('historyModal').style.display = 'none';
-        }
+        window.decreaseQuantity = function(id) {
+            const product = products.find(p => p.id === id);
+            if (product && product.currentQuantity > 0) {
+                product.currentQuantity--;
+                updateProductHistory(product, 'diminuição');
+                applyProductUpdate(product);
+                renderProducts();
+            }
+        };
 
-        // Função para confirmar exclusão de produto
-        function confirmDelete(id) {
+        window.increaseQuantity = function(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                product.currentQuantity++;
+                updateProductHistory(product, 'aumento');
+                applyProductUpdate(product);
+                renderProducts();
+            }
+        };
+
+        window.setQuantity = function(id) {
+            const product = products.find(p => p.id === id);
+            const input = document.getElementById(`input-${id}`);
+            const newQuantity = parseInt(input.value);
+            if (product && !isNaN(newQuantity) && newQuantity >= 0) {
+                const oldQty = product.currentQuantity;
+                product.currentQuantity = newQuantity;
+                if (oldQty !== newQuantity) {
+                    const action = newQuantity > oldQty ? 'aumento' : 'diminuição';
+                    updateProductHistory(product, action);
+                    applyProductUpdate(product);
+                    renderProducts();
+                }
+            }
+        };
+
+        // Filtro de busca
+        window.filterProducts = function() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p =>
+                p.supplier.toLowerCase().includes(term) ||
+                p.name.toLowerCase().includes(term)
+            );
+            renderProducts(filtered);
+        };
+
+        // Histórico
+        window.showHistory = function(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                const historyContent = document.getElementById('historyContent');
+                let html = `<h3>${product.name} - ${product.supplier}</h3><p>Quantidade atual: <strong>${product.currentQuantity}</strong></p>`;
+                if (product.history && product.history.length > 0) {
+                    html += `<table class="history-table"><thead><tr><th>Data/Hora</th><th>Quantidade</th><th>Ação</th></tr></thead><tbody>`;
+                    product.history.forEach(entry => {
+                        html += `<tr><td>${entry.date}</td><td>${entry.quantity}</td><td>${entry.action || 'registro inicial'}</td></tr>`;
+                    });
+                    html += `</tbody></table>`;
+                } else {
+                    html += '<p>Nenhum histórico disponível.</p>';
+                }
+                historyContent.innerHTML = html;
+                document.getElementById('historyModal').style.display = 'flex';
+            }
+        };
+
+        window.closeHistoryModal = function() {
+            document.getElementById('historyModal').style.display = 'none';
+        };
+
+        // Exclusão
+        window.confirmDelete = function(id) {
             const product = products.find(p => p.id === id);
             if (product) {
                 productToDelete = id;
                 document.getElementById('deleteMessage').textContent = `Tem certeza que deseja excluir o produto "${product.name}" do fornecedor "${product.supplier}"?`;
                 document.getElementById('deleteModal').style.display = 'flex';
             }
-        }
+        };
 
-        // Função para executar a exclusão do produto
-        function deleteProduct() {
+        window.deleteProduct = async function() {
             if (productToDelete) {
                 if (isOnline) {
-                    deleteProductFromFirebase(productToDelete).then(() => {
-                        // Remover da lista local
-                        const index = products.findIndex(p => p.id === productToDelete);
-                        if (index !== -1) {
-                            products.splice(index, 1);
-                        }
-                        renderProducts();
-                        closeDeleteModal();
-                    });
+                    await deleteProductFromFirebase(productToDelete);
                 } else {
-                    // Modo offline - remover localmente e adicionar à lista de pendências
                     removeFromLocalStorage(productToDelete);
-                    pendingChanges.push({type: 'delete', data: {id: productToDelete}});
-                    
-                    // Remover da lista local
-                    const index = products.findIndex(p => p.id === productToDelete);
-                    if (index !== -1) {
-                        products.splice(index, 1);
-                    }
-                    renderProducts();
-                    closeDeleteModal();
+                    pendingChanges.push({ type: 'delete', data: { id: productToDelete } });
                 }
+                const index = products.findIndex(p => p.id === productToDelete);
+                if (index !== -1) products.splice(index, 1);
+                renderProducts();
+                closeDeleteModal();
             }
-        }
+        };
 
-        // Função para fechar modal de exclusão
-        function closeDeleteModal() {
+        window.closeDeleteModal = function() {
             document.getElementById('deleteModal').style.display = 'none';
             productToDelete = null;
-        }
+        };
 
-        // Função para abrir modal de adicionar produto
-        function openAddModal() {
+        // Adicionar/Editar
+        window.openAddModal = function() {
             document.getElementById('productId').value = '';
             document.getElementById('supplier').value = '';
             document.getElementById('productName').value = '';
@@ -1466,10 +867,9 @@
             document.getElementById('quantity').value = '';
             document.getElementById('modalTitle').textContent = 'Adicionar Produto';
             document.getElementById('productModal').style.display = 'flex';
-        }
+        };
 
-        // Função para abrir modal de edição de produto
-        function openEditModal(id) {
+        window.openEditModal = function(id) {
             const product = products.find(p => p.id === id);
             if (product) {
                 document.getElementById('productId').value = product.id;
@@ -1480,130 +880,90 @@
                 document.getElementById('modalTitle').textContent = 'Editar Produto';
                 document.getElementById('productModal').style.display = 'flex';
             }
-        }
+        };
 
-        // Função para fechar modal
-        function closeModal() {
+        window.closeModal = function() {
             document.getElementById('productModal').style.display = 'none';
-        }
+        };
 
-        // Função para processar o formulário de produto
-        document.getElementById('productForm').addEventListener('submit', function(e) {
+        document.getElementById('productForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
             const productId = document.getElementById('productId').value;
             const supplier = document.getElementById('supplier').value;
             const productName = document.getElementById('productName').value;
             const organization = document.getElementById('organization').value;
             const quantity = parseInt(document.getElementById('quantity').value);
-            
+
             if (productId) {
-                // Editar produto existente
                 const product = products.find(p => p.id === productId);
                 if (product) {
-                    // Verificar se houve mudanças nos dados
                     const changes = [];
                     if (product.supplier !== supplier) changes.push(`Fornecedor: ${product.supplier} → ${supplier}`);
                     if (product.name !== productName) changes.push(`Nome: ${product.name} → ${productName}`);
                     if (product.organization !== organization) changes.push(`Organização: ${product.organization} → ${organization}`);
                     if (product.currentQuantity !== quantity) changes.push(`Quantidade: ${product.currentQuantity} → ${quantity}`);
-                    
-                    // Aplicar as mudanças
                     product.supplier = supplier;
                     product.name = productName;
                     product.organization = organization;
                     product.currentQuantity = quantity;
-                    
-                    // Registrar no histórico se houver mudanças
-                    if (changes.length > 0) {
-                        updateProductHistory(product, `edição: ${changes.join(', ')}`);
-                    }
-                    
-                    if (isOnline) {
-                        updateProductInFirebase(product);
-                    } else {
-                        updateInLocalStorage(product);
-                        pendingChanges.push({type: 'update', data: product});
-                    }
+                    if (changes.length > 0) updateProductHistory(product, `edição: ${changes.join(', ')}`);
+                    await applyProductUpdate(product);
                 }
             } else {
-                // Adicionar novo produto
-                const today = new Date();
-                const dateStr = today.toISOString().split('T')[0];
-                const timeStr = today.toTimeString().split(' ')[0];
-                
+                const now = new Date();
+                const dateStr = now.toISOString().split('T')[0];
+                const timeStr = now.toTimeString().split(' ')[0];
                 const newProduct = {
-                    supplier: supplier,
+                    supplier,
                     name: productName,
-                    organization: organization,
+                    organization,
                     currentQuantity: quantity,
-                    history: [{
-                        date: `${dateStr} ${timeStr}`,
-                        quantity: quantity,
-                        action: 'registro inicial'
-                    }]
+                    history: [{ date: `${dateStr} ${timeStr}`, quantity, action: 'registro inicial' }]
                 };
-                
                 if (isOnline) {
-                    addProductToFirebase(newProduct).then(id => {
-                        newProduct.id = id;
-                        products.push(newProduct);
-                        renderProducts();
-                    });
+                    const id = await addProductToFirebase(newProduct);
+                    newProduct.id = id;
+                    products.push(newProduct);
                 } else {
-                    // Gerar ID temporário para uso offline
                     newProduct.id = 'temp_' + Date.now();
                     addToLocalStorage(newProduct);
-                    pendingChanges.push({type: 'add', data: newProduct});
+                    pendingChanges.push({ type: 'add', data: newProduct });
                     products.push(newProduct);
-                    renderProducts();
                 }
+                renderProducts();
             }
-            
             closeModal();
         });
 
-        // Função para exportar para Excel
-        function exportToExcel() {
-            // Criar uma nova planilha
+        // Exportação Excel
+        window.exportToExcel = function() {
             const ws = XLSX.utils.json_to_sheet(products.map(p => ({
                 Fornecedor: p.supplier,
                 Produto: p.name,
                 Organização: p.organization,
                 Quantidade: p.currentQuantity
             })));
-            
-            // Criar um novo workbook
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Produtos Congelados");
-            
-            // Salvar o arquivo
             XLSX.writeFile(wb, "controle_congelados.xlsx");
-        }
+        };
 
-        // Função para processar o arquivo Excel
+        // Importação Excel
         document.getElementById('fileUpload').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-            
             const reader = new FileReader();
             reader.onload = function(e) {
                 const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                
-                // Processar a primeira planilha
+                const workbook = XLSX.read(data, { type: 'array' });
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-                
-                // Processar os dados da planilha
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                 processExcelData(jsonData);
             };
             reader.readAsArrayBuffer(file);
         });
 
-        // Função para processar dados do Excel
         function processExcelData(data) {
-            // Encontrar a linha com os cabeçalhos de data
             let headerRowIndex = -1;
             for (let i = 0; i < data.length; i++) {
                 if (data[i] && data[i].length > 0 && typeof data[i][0] === 'string' && data[i][0].includes('FORNECEDOR')) {
@@ -1611,118 +971,72 @@
                     break;
                 }
             }
-            
             if (headerRowIndex === -1) {
                 alert('Não foi possível identificar o formato da planilha.');
                 return;
             }
-            
-            // Extrair as datas dos cabeçalhos
             const dates = [];
             for (let j = 3; j < data[headerRowIndex].length; j++) {
                 if (data[headerRowIndex][j] && typeof data[headerRowIndex][j] === 'string') {
-                    // Tentar converter a data
-                    const dateStr = data[headerRowIndex][j];
-                    dates.push(dateStr.split(' ')[0]); // Pegar apenas a parte da data
+                    dates.push(data[headerRowIndex][j].split(' ')[0]);
                 }
             }
-            
-            // Processar os produtos
             const newProducts = [];
             for (let i = headerRowIndex + 1; i < data.length; i++) {
                 if (!data[i] || data[i].length < 4) continue;
-                
                 const supplier = data[i][1];
                 const productName = data[i][2];
                 const organization = data[i][3];
-                
                 if (!supplier || !productName) continue;
-                
-                // Extrair o histórico de quantidades
                 const history = [];
                 for (let j = 0; j < dates.length; j++) {
                     const quantity = data[i][4 + j];
                     if (quantity !== undefined && quantity !== null && quantity !== '') {
-                        // Converter valores como "2 cx" para números
                         let qtyValue = quantity;
                         if (typeof quantity === 'string') {
                             if (quantity.includes('cx')) {
                                 qtyValue = parseInt(quantity) || 0;
                             } else if (quantity.includes('*')) {
-                                // Calcular expressões como "=6*25"
-                                try {
-                                    qtyValue = eval(quantity.replace('=', ''));
-                                } catch (e) {
-                                    qtyValue = 0;
-                                }
+                                try { qtyValue = eval(quantity.replace('=', '')); } catch (e) { qtyValue = 0; }
                             } else {
                                 qtyValue = parseFloat(quantity) || 0;
                             }
                         }
-                        
-                        history.push({
-                            date: dates[j],
-                            quantity: qtyValue,
-                            action: 'registro histórico'
-                        });
+                        history.push({ date: dates[j], quantity: qtyValue, action: 'registro histórico' });
                     }
                 }
-                
-                // Determinar a quantidade atual (último registro)
                 const currentQuantity = history.length > 0 ? history[history.length - 1].quantity : 0;
-                
-                newProducts.push({
-                    supplier: supplier,
-                    name: productName,
-                    organization: organization,
-                    currentQuantity: currentQuantity,
-                    history: history
-                });
+                newProducts.push({ supplier, name: productName, organization, currentQuantity, history });
             }
-            
-            // Adicionar os novos produtos
-            newProducts.forEach(product => {
+            newProducts.forEach(async (product) => {
                 if (isOnline) {
-                    addProductToFirebase(product).then(id => {
-                        product.id = id;
-                        products.push(product);
-                        renderProducts();
-                    });
+                    const id = await addProductToFirebase(product);
+                    product.id = id;
+                    products.push(product);
                 } else {
-                    // Gerar ID temporário para uso offline
                     product.id = 'temp_' + Date.now();
                     addToLocalStorage(product);
-                    pendingChanges.push({type: 'add', data: product});
+                    pendingChanges.push({ type: 'add', data: product });
                     products.push(product);
                 }
             });
-            
             renderProducts();
             alert(`Importação concluída! ${newProducts.length} produtos importados.`);
         }
 
-        // Inicializar a aplicação
+        // Inicialização
         function initApp() {
-            // Primeiro carregar do localStorage para exibir algo rapidamente
             loadFromLocalStorage();
-            
-            // Se não houver dados, inicializar com os dados padrão
             if (products.length === 0) {
                 initializeWithDefaultData();
             }
-            
             renderProducts();
-            
-            // Depois tentar carregar do Firebase
             loadProductsFromFirebase(() => {
                 renderProducts();
             });
-            
-            // Configurar o botão de confirmação de exclusão
             document.getElementById('confirmDeleteBtn').addEventListener('click', deleteProduct);
         }
 
-        // Inicializar a aplicação quando o documento estiver carregado
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
