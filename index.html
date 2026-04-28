@@ -1,11 +1,8 @@
-Aqui está o código completo e funcional, com a responsividade aprimorada para celulares e tablets, **sem alterar nenhuma funcionalidade original**. A única mudança é a adição de regras CSS para telas menores, tornando a tabela legível e fácil de usar em dispositivos móveis.
-
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Produtos Congelados</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Adicionando Firebase -->
@@ -20,26 +17,26 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             --success-color: #2ecc71;
             --warning-color: #f39c12;
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
         }
-
+        
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
-
+        
         header {
             background-color: var(--primary-color);
             color: white;
@@ -49,12 +46,12 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             border-radius: 5px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
+        
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
-
+        
         .controls {
             display: flex;
             justify-content: space-between;
@@ -62,12 +59,12 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             flex-wrap: wrap;
             gap: 10px;
         }
-
+        
         .search-box {
             flex: 1;
             min-width: 250px;
         }
-
+        
         .search-box input {
             width: 100%;
             padding: 10px;
@@ -75,7 +72,7 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             border-radius: 4px;
             font-size: 16px;
         }
-
+        
         .btn {
             padding: 10px 15px;
             border: none;
@@ -85,52 +82,52 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             font-weight: 500;
             transition: all 0.3s ease;
         }
-
+        
         .btn-primary {
             background-color: var(--secondary-color);
             color: white;
         }
-
+        
         .btn-primary:hover {
             background-color: #2980b9;
         }
-
+        
         .btn-danger {
             background-color: var(--accent-color);
             color: white;
         }
-
+        
         .btn-danger:hover {
             background-color: #c0392b;
         }
-
+        
         .btn-success {
             background-color: var(--success-color);
             color: white;
         }
-
+        
         .btn-success:hover {
             background-color: #27ae60;
         }
-
+        
         .btn-warning {
             background-color: var(--warning-color);
             color: white;
         }
-
+        
         .btn-warning:hover {
             background-color: #e67e22;
         }
-
+        
         .btn-info {
             background-color: var(--secondary-color);
             color: white;
         }
-
+        
         .btn-info:hover {
             background-color: #2980b9;
         }
-
+        
         .products-table {
             width: 100%;
             border-collapse: collapse;
@@ -140,30 +137,29 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             border-radius: 8px;
             overflow: hidden;
         }
-
-        .products-table th,
-        .products-table td {
+        
+        .products-table th, .products-table td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-
+        
         .products-table th {
             background-color: var(--primary-color);
             color: white;
             font-weight: 500;
         }
-
+        
         .products-table tr:hover {
             background-color: #f9f9f9;
         }
-
+        
         .quantity-controls {
             display: flex;
             align-items: center;
             gap: 5px;
         }
-
+        
         .quantity-btn {
             width: 30px;
             height: 30px;
@@ -176,15 +172,15 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             border: 1px solid #ddd;
             background-color: #f5f5f5;
         }
-
+        
         .quantity-btn.decrease {
             color: var(--accent-color);
         }
-
+        
         .quantity-btn.increase {
             color: var(--success-color);
         }
-
+        
         .quantity-input {
             width: 60px;
             padding: 5px;
@@ -192,45 +188,45 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             border-radius: 4px;
             text-align: center;
         }
-
+        
         .set-quantity-btn {
             padding: 5px 10px;
             font-size: 12px;
         }
-
+        
         .history-btn {
             padding: 5px 10px;
             font-size: 12px;
             background-color: var(--warning-color);
             color: white;
         }
-
+        
         .history-btn:hover {
             background-color: #e67e22;
         }
-
+        
         .edit-btn {
             padding: 5px 10px;
             font-size: 12px;
             background-color: var(--secondary-color);
             color: white;
         }
-
+        
         .edit-btn:hover {
             background-color: #2980b9;
         }
-
+        
         .delete-btn {
             padding: 5px 10px;
             font-size: 12px;
             background-color: var(--accent-color);
             color: white;
         }
-
+        
         .delete-btn:hover {
             background-color: #c0392b;
         }
-
+        
         .modal {
             display: none;
             position: fixed;
@@ -243,7 +239,7 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             align-items: center;
             justify-content: center;
         }
-
+        
         .modal-content {
             background-color: white;
             padding: 30px;
@@ -254,64 +250,81 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
-
+        
         .modal h2 {
             margin-bottom: 20px;
             color: var(--primary-color);
             border-bottom: 2px solid var(--secondary-color);
             padding-bottom: 10px;
         }
-
+        
         .form-group {
             margin-bottom: 20px;
         }
-
+        
         .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: 500;
         }
-
-        .form-group input,
-        .form-group select {
+        
+        .form-group input, .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
         }
-
+        
         .form-actions {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
             margin-top: 20px;
         }
-
+        
         .history-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-
-        .history-table th,
-        .history-table td {
+        
+        .history-table th, .history-table td {
             padding: 8px 10px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-
+        
         .history-table th {
             background-color: #f5f5f5;
             font-weight: 500;
         }
-
+        
         footer {
             text-align: center;
             margin-top: 40px;
             padding: 20px;
             color: #7f8c8d;
             font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .products-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .quantity-controls {
+                flex-wrap: wrap;
+            }
         }
 
         .loading {
@@ -320,7 +333,7 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             font-size: 18px;
             color: #7f8c8d;
         }
-
+        
         .sync-status {
             display: flex;
             align-items: center;
@@ -328,215 +341,31 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             margin-top: 10px;
             font-size: 14px;
         }
-
+        
         .sync-indicator {
             width: 12px;
             height: 12px;
             border-radius: 50%;
             display: inline-block;
         }
-
+        
         .sync-online {
             background-color: var(--success-color);
         }
-
+        
         .sync-offline {
             background-color: var(--accent-color);
         }
-
+        
         .sync-pending {
             background-color: var(--warning-color);
             animation: pulse 1.5s infinite;
         }
-
+        
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.5; }
             100% { opacity: 1; }
-        }
-
-        /* ========= RESPONSIVIDADE PARA CELULARES E TABLETS ========= */
-        @media screen and (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            header {
-                padding: 15px 0;
-                margin-bottom: 20px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-                padding: 0 10px;
-            }
-
-            .controls {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .search-box {
-                width: 100%;
-                min-width: unset;
-            }
-
-            .controls>div:last-child {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                justify-content: center;
-            }
-
-            .btn {
-                padding: 8px 12px;
-                font-size: 14px;
-                white-space: nowrap;
-            }
-
-            /* Transforma a tabela em cards */
-            .products-table {
-                display: block;
-                width: 100%;
-                overflow-x: visible;
-                box-shadow: none;
-                border-radius: 5px;
-            }
-
-            .products-table thead {
-                display: none;
-                /* Esconde o cabeçalho no mobile */;
-            }
-
-            .products-table tbody {
-                display: block;
-            }
-
-            .products-table tr {
-                display: block;
-                margin-bottom: 15px;
-                background: white;
-                border-radius: 8px;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-                padding: 12px;
-            }
-
-            .products-table td {
-                display: flex;
-                align-items: center;
-                padding: 8px 5px;
-                border-bottom: 1px solid #eee;
-                font-size: 14px;
-            }
-
-            .products-table td:last-child {
-                border-bottom: none;
-                padding-top: 10px;
-                flex-wrap: wrap;
-                gap: 5px;
-            }
-
-            /* Labels via pseudo-elementos */
-            .products-table td:nth-of-type(1)::before {
-                content: "Fornecedor:";
-                font-weight: 600;
-                min-width: 95px;
-                color: var(--primary-color);
-                margin-right: 8px;
-            }
-
-            .products-table td:nth-of-type(2)::before {
-                content: "Produto:";
-                font-weight: 600;
-                min-width: 95px;
-                color: var(--primary-color);
-                margin-right: 8px;
-            }
-
-            .products-table td:nth-of-type(3)::before {
-                content: "Organização:";
-                font-weight: 600;
-                min-width: 95px;
-                color: var(--primary-color);
-                margin-right: 8px;
-            }
-
-            .products-table td:nth-of-type(4)::before {
-                content: "Quantidade:";
-                font-weight: 600;
-                min-width: 95px;
-                color: var(--primary-color);
-                margin-right: 8px;
-            }
-
-            /* Remove label da coluna de ações */
-            .products-table td:nth-of-type(5)::before {
-                content: none;
-            }
-
-            .quantity-controls {
-                flex-wrap: wrap;
-                gap: 5px;
-                width: 100%;
-            }
-
-            .quantity-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 14px;
-            }
-
-            .quantity-input {
-                width: 50px;
-                padding: 4px;
-                font-size: 14px;
-            }
-
-            .set-quantity-btn,
-            .history-btn,
-            .edit-btn,
-            .delete-btn {
-                padding: 4px 8px;
-                font-size: 12px;
-                margin: 2px;
-            }
-
-            .sync-status {
-                justify-content: center;
-                font-size: 12px;
-            }
-
-            footer {
-                font-size: 12px;
-                padding: 15px 10px;
-            }
-        }
-
-        /* Ajuste extra para telas muito pequenas (ex: 400px) */
-        @media screen and (max-width: 400px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .products-table td {
-                font-size: 13px;
-                padding: 6px 2px;
-            }
-
-            .products-table td::before {
-                min-width: 80px;
-                font-size: 12px;
-                margin-right: 4px;
-            }
-
-            .quantity-input {
-                width: 40px;
-            }
-
-            .btn {
-                padding: 6px 10px;
-                font-size: 13px;
-            }
         }
     </style>
 </head>
@@ -551,7 +380,7 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             </div>
         </div>
     </header>
-
+    
     <div class="container">
         <div class="controls">
             <div class="search-box">
@@ -564,7 +393,7 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
                 <button class="btn btn-primary" id="addProductBtn" onclick="openAddModal()">Adicionar Produto</button>
             </div>
         </div>
-
+        
         <table class="products-table" id="productsTable">
             <thead>
                 <tr>
@@ -582,7 +411,7 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             </tbody>
         </table>
     </div>
-
+    
     <!-- Modal para adicionar/editar produto -->
     <div class="modal" id="productModal">
         <div class="modal-content">
@@ -612,7 +441,7 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             </form>
         </div>
     </div>
-
+    
     <!-- Modal para visualizar histórico -->
     <div class="modal" id="historyModal">
         <div class="modal-content">
@@ -625,7 +454,7 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             </div>
         </div>
     </div>
-
+    
     <!-- Modal de confirmação para exclusão -->
     <div class="modal" id="deleteModal">
         <div class="modal-content">
@@ -637,7 +466,7 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             </div>
         </div>
     </div>
-
+    
     <footer>
         <div class="container">
             <p>Sistema de Controle de Produtos Congelados com Sincronização em Tempo Real &copy; 2023</p>
@@ -656,11 +485,11 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
             appId: "1:760244638816:web:52200f4caf63c9e3f19f05",
             measurementId: "G-GHZTH43VQN"
         };
-
+        
         // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-
+        
         // Dados iniciais baseados na planilha fornecida
         const initialProducts = [
             {
@@ -669,2472 +498,1232 @@ Aqui está o código completo e funcional, com a responsividade aprimorada para 
                 name: "CROISSANT 55G",
                 organization: "PCTE C/10 UNIDADES",
                 currentQuantity: 19.0,
-                history history:: [
-                    { [
-                    { date: date: "202 "20255-04--17",04-17", quantity: quantity: 110 110.0.0, action:, action: " "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-04-04-24-24", quantity", quantity: : 10.10.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "2025- "2025-05-05-02",02", quantity: quantity: 10 10.0.0, action: ", action: "registroregistro histórico" histórico" },
-                    },
-                    { date { date: "2025: "2025-05-05-08-08", quantity", quantity: : 10.0,10.0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-05-05-27",27", quantity: quantity: 140.0 140.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date: " { date: "2025-06-2025-0605", quantity: 118.0, action: "registro histórico-05", quantity: 118.0, action: "registro histórico"" },
-                    { date: },
-                    { date: "202 "2025-5-06-06-13",13", quantity: 118.0 quantity:, action 118.0: ", actionregistro: " histórico"registro },
-                    { date: "2025 histórico" },
-                   -07 { date: "2025-07-21-21", quantity", quantity: : 59.59.0,0, action: action: "regist "registro histórico"ro histórico" },
-                    { },
-                    { date: date: "202 "2025-5-08-0508-05",", quantity: quantity: 29 29.0.0, action, action: ": "registro histórico"registro histórico" },
-                    },
-                    { date: "2025-08 { date: "2025-08-15-15", quantity", quantity: : 19.19.0,0, action: action: "regist "registro histórico" }
-               ro histórico" ]
-            }
+                history: [
+                    { date: "2025-04-17", quantity: 110.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 140.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 118.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 118.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 59.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 29.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 19.0, action: "registro histórico" }
                 ]
             },
-            },
             {
-                id {
                 id: "2",
-                supplier: ": "2POM",
-                supplier: "POMELOELO",
-               ",
-                name: name: "MIN "MINI PI PÃO DEÃO DE CHOCOL CHOCOLATEATE",
-                organization",
-                organization: ": "PCTE CPCTE C/25/25 UNIDAD UNIDADESES",
-                current",
-                currentQuantity:Quantity: 25 25.0.0,
-               ,
-                history: history: [
-                    { date: " [
-                    { date: "2025-04-172025-04-17", quantity: 250.0,", quantity: 250.0, action: "registro histórico" action: "registro histórico },
-                    { date: "202" },
-                    { date: "2025-04-24",5-04-24", quantity: quantity: 150.0 150.0, action: "registro histórico", action: "registro histórico" }, // =6*25
-                    }, // =6*25 { date: "
-                    { date: "20252025-05-02", quantity-05-02: 125.0,", quantity: 125.0, action: "registro histórico" action: "registro histórico },
-                    { date: "202" },
-                    { date: "2025-05-08",5-05-08", quantity: 125.0 quantity: 125.0, action: "registro histórico", action: "registro },
-                    { date: "2025 histórico" },
-                    { date: "-05-272025-05-27", quantity", quantity: 75.: 75.0, action: "registro histórico0, action: "registro histórico"" },
-                    { date: },
-                    { date: "202 "2025-06-05",5-06-05", quantity: 75.0 quantity: 75.0, action: "registro histórico", action: "registro },
-                    { date: " histórico" },
-                    { date: "2025-06-132025-06-13", quantity", quantity: 75.0,: 75.0, action: "registro histórico action: "registro histórico" },
-                    { date: "202" },
-                    { date: "2025-07-21",5-07-21", quantity quantity: 75.0, action: 75.0: "registro, action: "registro histórico" histórico" },
-                    { date: " },
-                    { date: "2025-08-052025-08-05", quantity", quantity: 30.0,: 30.0, action: "registro histórico" action: "registro histórico },
-                    { date:" },
-                    { date: "202 "2025-08-155-08-15",", quantity: 25.0 quantity: 25.0, action, action: "registro histórico": "registro }
+                supplier: "POMELO",
+                name: "MINI PÃO DE CHOCOLATE",
+                organization: "PCTE C/25 UNIDADES",
+                currentQuantity: 25.0,
+                history: [
+                    { date: "2025-04-17", quantity: 250.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 150.0, action: "registro histórico" }, // =6*25
+                    { date: "2025-05-02", quantity: 125.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 125.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 75.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 75.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 75.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 75.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 30.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 25.0, action: "registro histórico" }
                 ]
-            histórico" }
-                ]
-            },
             },
             {
-                id: "3 {
-                id:",
-                supplier: "3",
-                "P supplier: "POMELOOMELO",
+                id: "3",
+                supplier: "POMELO",
                 name: "BAGUETTE RUSTIGUETTE",
-                organization",
-                name: "BAGUETTE RUSTIGUETTE: "PCTE C",
-                organization: "PCTE C/05/05 UNIDADES UNIDAD",
-                currentESQuantity:",
-                currentQuantity: 0 0.0.0,
-               ,
-                history: history: [
-                    [
-                    { date { date: ": "20252025-04-04-17-17",", quantity quantity: : 25.25.0,0, action: action: "registro histórico "registro histórico"" },
- },
-                    { date:                    { date: "2025- "2025-04-24",04-24", quantity: quantity: 22 22.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "2025-052025-05-02-02", quantity", quantity: : 22.22.0,0, action: "registro histórico" },
-                    { date: "202 action: "registro histórico" },
-                    { date:5- "2025-0505--08",08", quantity: quantity: 22 22.0, action.0, action: ": "registregistroro histórico" histórico" },
-                    },
-                    { date: " { date2025: "-052025-27-05-27", quantity", quantity: : 15.0,15. action:0, "regist action: "registro históricoro histórico"" },
- },
-                    {                    { date: date: "202 "2025-5-06-06-05",05", quantity: quantity: 15.0, action 15: ".0, action: "registro histórico" },
-                   registro histórico" },
-                    { date { date:: "2025 "-06-132025-06-13", quantity", quantity: : 1515..0,0, action: action: "regist "registro históricoro histórico"" },
-                    },
-                    { { date: date: "202 "2025-5-07-07-21",21", quantity: quantity: 0 0.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-08-08-05-05", quantity", quantity: : 0.0.0,0, action: action: "registro histórico" },
- "registro histórico" },
-                    {                    { date: date: "202 "2025-5-08-08-15", quantity:15", quantity: 0 0.0.0, action, action: ": "registroregistro histórico" histórico" }
-                }
-                ]
-            ]
-            },
-            },
-            {
-                {
-                id: id: "4 "4",
-               ",
-                supplier: supplier: "P "POMELOMELOO",
-                name",
-                name: ": "BAGBAGUETUETTE GALTE GALICIAICIA",
-               ",
-                organization: organization: "P "PCTECTE C/ C/ 06 06 UN UNIDADIDADES",
-               ES",
-                current currentQuantity:Quantity: 5 5.0.0,
-               ,
-                history: history: [
-                    [
-                    { date { date: ": "20220255-04-04-17-17", quantity", quantity: : 30.30.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-04-04-24",24", quantity: quantity: 11 11.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-05-02-02", quantity", quantity: : 10.10.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-05-05-08",08", quantity: 10 quantity:.0 10, action.0: ", action: "registroregistro histórico" histórico" },
-                    { date },
-                   : " { date2025: "2025-05-05-27-27", quantity", quantity: : 9.9.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-06-05",5- quantity:06-05", 11.0 quantity:, action 11.0: ", actionregistro histórico": "registro },
-                    { date histórico" },
-                    { date: ": "20252025-06-06-13-13", quantity", quantity: : 11.11.0,0, action: action: "registro histórico "registro histórico" },
-" },
-                    {                    { date: date: "202 "2025-5-07-07-21",21", quantity: quantity: 10.0 10.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-08--0508-05", quantity: ", quantity9.: 9.0,0, action action: "regist: "registro históricoro histórico"" },
-                    { },
-                    { date: date: "2025 "2025--08-08-15",15", quantity: quantity: 5 5.0.0, action: ", action: "registroregistro histórico" histórico" }
-                }
-                ]
-            ]
-            },
-            },
-            {
-                id: {
-                id: "5 "5",
-               ",
-                supplier: supplier: "BRA "BRAZ",
-                name: "PIZZ",
-                name: "PIZZA MUSSARZA MUSSARELAELA",
-                organization",
-                organization: ": "UNIDADEUNIDADE",
-                current",
-                currentQuantity:Quantity: 0 0.0.0,
-               ,
+                organization: "PCTE C/05 UNIDADES",
+                currentQuantity: 0.0,
                 history: [
-                    history: [
-                    { date { date: ": "2025-042025-04-17",-17", quantity quantity: : 6.6.0,0, action: action: "regist "registroro histórico histórico" },
-                    { date:" },
-                    { date: "2025- "2025-04-24",04-24", quantity: quantity: 2 2.0.0, action, action: ": "registro histórico"registro histórico" },
-                    },
-                    { date { date: ": "20252025-05-02-05-02", quantity", quantity: : 0.0.0,0, action: "regist action: "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "20255-05--05-08",08", quantity: quantity: 0 0.0,.0, action action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-05-27-27", quantity", quantity: 3.0, action:: 3.0, action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-06-06-05",05", quantity: quantity: 3 3.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-06-06-13-13", quantity", quantity: : 3.3.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-07-07-21",21", quantity: quantity: 0.0 0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-08-08-05-05", quantity", quantity: : 0.0.0,0, action: action: "regist "registro históricoro histórico"" },
- },
-                    {                    { date: date: "2025 "202-08-5-15",08- quantity:15", 0 quantity: 0.0.0, action, action: "registro: " histórico"registro }
-                histórico" }
+                    { date: "2025-04-17", quantity: 25.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 22.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 22.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 22.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 15.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 15.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 15.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
                 ]
-            ]
-            },
             },
             {
-                id: {
-                "6 id: "6",
-               ",
-                supplier: supplier: "BRA "BRAZZ",
-                name",
-                name: ": "PIZPIZZA BRZA BRÁZÁZ ABOB ABOBRINRINHA",
-                organizationHA",
-                organization: ": "UNIDUNIDADEADE",
-                current",
-                currentQuantity:Quantity: 2 2.0.0,
-               ,
-                history: history: [
-                    [
-                    { date { date: ": "20252025-04-04-17-17", quantity", quantity: : 5.5.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-04-04-24",24", quantity: quantity: 2 2..00, action, action: ": "registroregistro histórico" },
-                    histórico" },
-                    { date { date: ": "20252025-05--05-0202", quantity", quantity: : 2.2.0,0, action: action: "registro histórico "registro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-05-08",05-08", quantity: quantity: 2 2.0.0, action, action: ": "registroregistro histórico" },
-                    histórico" },
-                    { date { date: ": "20252025-05-05-27", quantity-27", quantity: : 2.2.0,0, action: action: "regist "registro histórico"ro histórico" },
-                    { },
-                    { date: date: "202 "2025-5-06-06-0505", quantity:", quantity: 2 2.0, action.0, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-06--06-1313", quantity", quantity: : 2.2.0,0, action: "regist action: "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-07-5-07-21",21", quantity: quantity: 2 2.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-08-08-05-05", quantity", quantity: : 2.2.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-08-08-15",15", quantity: quantity: 2 2.0.0, action, action: ": "registroregistro histórico" histórico" }
-                }
-                ]
-            ]
-            },
-            },
-            {
-                {
-                id: id: "7 "7",
-               ",
-                supplier: supplier: "BRA "BRAZZ",
-               ",
-                name name: ": "PIZPIZZA QUZA QUATROATRO QUEIJ QUEIJOSOS",
-                organization",
-                organization: "UNID: "UNIDADEADE",
-                current",
-                currentQuantity:Quantity: 3 3..00,
-               ,
-                history: history: [
-                    [
-                    { date: { date "2025: "2025-04-04-17", quantity-17", quantity: : 5.0,5.0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-04-04-24",24", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" },
-                    histórico" { date },
-                    { date: ": "20252025-05-05-02", quantity-02: ", quantity: 1.1.0,0, action: action: "registro histórico "regist"ro histórico" },
-                    { },
-                    { date: date: "202 "2025-5-05-08",05-08", quantity: 1.0 quantity: 1.0, action, action: "registro: "registro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-27", quantity: 3.-05-27", quantity: 3.0,0, action: "regist action: "registro histórico"ro histórico" },
- },
-                    { date: "2025-06-05",                    { date: "2025-06-05", quantity: quantity: 3 3.0.0, action, action: "registro: "registro histórico" },
-                    histórico" },
-                    { date { date: ": "20252025-06-06-13-13", quantity: ", quantity: 3.3.0,0, action: action: "regist "registro históricoro histórico"" },
- },
-                    {                    { date: date: "202 "2025-5-07-07-21",21", quantity: quantity: 1 1.0.0, action, action: ": "registro histórico"registro histórico" },
-                    },
-                    { date { date: ": "20252025-08-05-08-05", quantity", quantity: : 3.3.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-08-08-15",15", quantity: quantity: 3.0, action: " 3registro.0, action: "registro histórico" histórico" }
-                }
-                ]
-            ]
-            },
-            {
-                id: "8 },
-           ",
-                {
-                id: "8",
-                supplier: supplier: "BRAZ "BRA",
-                nameZ: "",
-                namePIZ: "PIZZA PORTZA PORTUGUUGUESAESA",
-                organization",
-                organization: ": "UNIDUNIDADEADE",
-                current",
-                currentQuantity:Quantity: 1 1..0,
-                history:0,
+                id: "4",
+                supplier: "POMELO",
+                name: "BAGUETTE GALICIA",
+                organization: "PCTE C/ 06 UNIDADES",
+                currentQuantity: 5.0,
                 history: [
-                    [
-                    { { date date: ": "20252025-04-04-17-17", quantity", quantity: : 0.0.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-04-04-24",24", quantity: quantity: 0 0.0.0,, action action: "registro histórico": "registro histórico" },
-                    },
-                    { date { date: "2025: "2025-05-05-02-02", quantity", quantity: 0.0, action:: 0.0, action: "registro histórico "registro histórico" },
-                    {" date: },
-                    { date: "202 "2025-05-5-05-08", quantity: 008",.0 quantity: 0.0, action, action: ": "registroregistro histórico" },
-                    { date histórico": " },
-                    { date: "20252025-05-05-27-27", quantity", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-06-06-05",05", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date: " { date: "20252025-06-06-13-13", quantity", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-07-07-21",21", quantity: quantity: 1 1.0.0, action, action: "registro: " histórico"registro histórico },
-                   " },
-                    { { date date: "2025: "2025-08-08-05", quantity-05", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-08-08-15",15", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" }
-                histórico" }
+                    { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 9.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 9.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 5.0, action: "registro histórico" }
                 ]
-            ]
-            },
             },
             {
-                {
-                id id: "9: "9",
-               ",
-                supplier: supplier: "BRA "BRAZZ",
-                name: "",
-                name: "PIZPIZZA CALZA CALABRESABRESAA",
-                organization",
-                organization: ": "UNIDUNIDADEADE",
-                current",
-                currentQuantity:Quantity:  0.00.0,
-               ,
-                history: history: [
-                    [
-                    { date { date:: "2025 "2025-04-17", quantity-04-17", quantity::  5.5.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-04-04-24",24", quantity: quantity: 3 3.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-05-02-02", quantity", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-05-05-08",08", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-05-27", quantity: -27", quantity: 2.2.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-06-06-05", quantity: 2.05", quantity: 2.00, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-06-06-13-13", quantity", quantity: : 2.2.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-07-07-21",21", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-08-08-05-05", quantity", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-08-08-15",15", quantity: quantity: 0 0.0.0, action, action: ": "registroregistro histórico" histórico" }
-                }
+                id: "5",
+                supplier: "BRAZ",
+                name: "PIZZA MUSSARELA",
+                organization: "UNIDADE",
+                currentQuantity: 0.0,
+                history: [
+                    { date: "2025-04-17", quantity: 6.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
                 ]
-            ]
-            },
             },
             {
-                {
-                id: id: "10 "10",
-               ",
-                supplier: supplier: "AL "ALMANARAMANARA",
-               ",
-                name: name: "ES "ESFIHAFIHA CARNE CARNE FECHADA FECHADA",
-                organization",
-                organization: "PCTE C: "/5PCTE C/5 UNIDAD UNIDADESES",
-                current",
-                currentQuantity: 4.0Quantity:,
-                4.0,
-                history: history: [
-                    [
-                    { date { date: ": "20252025-04-04-17-17", quantity", quantity: : 30.30.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-04-5-04-24",24", quantity: quantity: 10 10.0.0, action, action: "registro histórico": "regist },
-                   ro histórico" },
-                    { date { date: ": "20252025-05-05-02-02", quantity", quantity: : 10.10.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { date },
-                    { date:: "202 "2025-5-05-05-08",08", quantity: quantity: 8 8.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date: " { date: "20252025-05-05-27-27", quantity", quantity: 7.: 7.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date date:: "202 "2025-5-06-06-05",05", quantity: quantity: 6 6.0.0, action, action: "registro: "registro histórico" histórico" },
-                    { date },
-                    { date: ": "20252025-06-06-13", quantity-13: ", quantity: 6.6.0,0, action: action: "registro "registro histórico" histórico" },
-                    { },
-                    { date: date: "202 "2025-5-07-07-21",21", quantity quantity: 2: 2.0, action.0, action: ": "registro histórico"registro histórico" },
-                    },
-                    { date: " { date: "20252025-08-08-05-05", quantity", quantity: : 2.02.0, action:, action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-08-08-15",15", quantity: quantity: 4 4.0.0, action, action: ": "registroregistro histórico" histórico" }
-                }
+                id: "6",
+                supplier: "BRAZ",
+                name: "PIZZA BRÁZ ABOBRINHA",
+                organization: "UNIDADE",
+                currentQuantity: 2.0,
+                history: [
+                    { date: "2025-04-17", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 2.0, action: "registro histórico" }
                 ]
-            ]
-            },
             },
             {
-                {
-                id: id: "11 "11",
-               ",
-                supplier: supplier: "AL "ALMANARAMANARA",
-               ",
-                name: name: "ES "ESFIHAFIHA QUEI QUEIJO ABJO ABERTAERTA",
-               ",
-                organization: organization: "P "PCTE C/5 UNIDADES",
-                currentQuantity: CTE C/5 UNIDADES",
+                id: "7",
+                supplier: "BRAZ",
+                name: "PIZZA QUATRO QUEIJOS",
+                organization: "UNIDADE",
                 currentQuantity: 3.0,
                 history: [
+                    { date: "2025-04-17", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 3.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "8",
+                supplier: "BRAZ",
+                name: "PIZZA PORTUGUESA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0,
+                history: [
+                    { date: "2025-04-17", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "9",
+                supplier: "BRAZ",
+                name: "PIZZA CALABRESA",
+                organization: "UNIDADE",
+                currentQuantity: 0.0,
+                history: [
+                    { date: "2025-04-17", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 3.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "10",
+                supplier: "ALMANARA",
+                name: "ESFIHA CARNE FECHADA",
+                organization: "PCTE C/5 UNIDADES",
+                currentQuantity: 4.0, // 4cx
+                history: [
+                    { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 8.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 7.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 6.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 6.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" }, // 2 cx
+                    { date: "2025-08-05", quantity: 2.0, action: "registro histórico" }, // 2cx
+                    { date: "2025-08-15", quantity: 4.0, action: "registro histórico" } // 4cx
+                ]
+            },
+            {
+                id: "11",
+                supplier: "ALMANARA",
+                name: "ESFIHA QUEIJO ABERTA",
+                organization: "PCTE C/5 UNIDADES",
+                currentQuantity: 3.0, // 3cx
+                history: [
                     { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
                     { date: "2025-04-24", quantity: 11.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity:3.0,
+                    { date: "2025-05-02", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 11.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 5.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" }, // 1 cx
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1cx
+                    { date: "2025-08-15", quantity: 3.0, action: "registro histórico" } // 3cx
+                ]
+            },
+            {
+                id: "12",
+                supplier: "ALMANARA",
+                name: "ESFIHA ZATAR ABERTA-",
+                organization: "PCTE C/5 UNIDADES",
+                currentQuantity: 8.0, // 8cx
                 history: [
                     { date: "2025-04-17", quantity: 30.0, action: "registro histórico" },
-                    { date: "2025-04-24", quantity: 11.0, action: "registro histórico" },
-                    { date: "2025-05-02", quantity: 11 11.0.0, action: ", actionregistro: "registro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-05-08-08", quantity", quantity: : 11.11.0,0, action: "regist action: "registro históricoro histórico"" },
-                    { },
-                    { date: date: "2025- "2025-05-05-27", quantity: 527",.0 quantity: 5.0,, action: " actionregistro: " histórico" },
-                    { dateregistro: " histórico" },
-                    { date: "2025-062025-06-05-05", quantity", quantity: : 5.5.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: "202 date: "2025-5-06-06-13",13", quantity: quantity:  55.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date: { date: " "20252025-07-07-21",-21 quantity", quantity: : 1.1.0,0, action: "regist action: "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-08-08-05",05", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-08-08-15-15", quantity", quantity: : 3.3.0,0, action: action: "regist "registro históricoro histórico"" }
-                }
+                    { date: "2025-04-24", quantity: 17.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 17.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 17.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 16.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 16.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 16.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 10.0, action: "registro histórico" }, // 10 cx
+                    { date: "2025-08-05", quantity: 10.0, action: "registro histórico" }, // 10cx
+                    { date: "2025-08-15", quantity: 8.0, action: "registro histórico" } // 8cx
                 ]
-            ]
-            },
             },
             {
-                id {
-                id: "12: "12",
-                supplier",
-                supplier: ": "ALMANALMANARAARA",
-                name: "",
-                name: "ESFIESFIHA ZHA ZATARATAR ABERT ABERTA-A-",
-                organization:",
-                organization: "P "PCTECTE C/ C/5 UN5 UNIDADESIDADES",
-               ",
-                currentQuantity currentQuantity: : 8.08.,
-                history:0,
+                id: "13",
+                supplier: "SWIFT",
+                name: "BOLINHO DE QUEIJO",
+                organization: "PACOTE",
+                currentQuantity: 0.0,
                 history: [
-                    { date: [
-                    { date: "202 "2025-04-5-17", quantity:04-17", quantity: 30 30.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-04-04-24-24", quantity", quantity: : 17.17.0,0, action: action: "regist "registroro histórico histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-05-05-02",02", quantity: quantity: 17 17.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-05-08-08", quantity", quantity: : 17.17.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-05-05-27",27", quantity: quantity: 16 16..00, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { { date date: ": "20252025-06-06-05-05", quantity", quantity: : 16.16.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-06-13",5-06-13", quantity: quantity: 16 16.0,.0, action action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date: " { date: "20252025-07-07-21-21", quantity", quantity: : 10.0,10.0, action: action: "regist "registro históricoro histórico"" },
-                    { date },
-                    { date:: "202 "2025-5-08-05",08-05", quantity: quantity: 10 10.0.0, action, action:: " "registroregistro histórico" },
-                    histórico" },
-                    { date: "2025 { date: "2025-08-08-15-15", quantity:", quantity:  8.8.0,0, action: action: "regist "registro históricoro histórico"" }
-                }
+                    { date: "2025-05-27", quantity: 7.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 7.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 7.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 3.0, action: "registro histórico" }, // 3 cx
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
                 ]
-            ]
-            },
             },
             {
-                id {
-                id: ": "1313",
-                supplier",
-                supplier: ": "SWIFTSWIFT",
-               ",
-                name: name: "B "BOLINOLINHO DEHO DE QUEI QUEIJOJO",
-                organization",
-                organization: ": "PACOTEPACOTE",
-               ",
-                currentQuantity currentQuantity: : 0.0.00,
-                history,
-                history:: [
-                    { [
-                    { date: date: "202 "2025-5-05-05-27",27", quantity: quantity: 7 7.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date: " { date: "20252025-06-06-05-05", quantity", quantity: 7.: 0,7.0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "20255--06-06-13",13", quantity: quantity: 7 7.0.0, action, action: "registro: "registro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-07-07-21-21", quantity: ", quantity: 3.3.0,0, action action: "regist: "registro históricoro histórico"" },
-                    { },
-                    { date: "202 date: "2025-5-08-08-05",05", quantity: quantity: 1 1.0.0, action: ", action: "registregistroro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-08-08-15-15", quantity", quantity: : 0.0,0. action:0, action: "regist "registro históricoro histórico"" }
-                }
-                ]
-            ]
-            },
-            },
-            {
-                id {
-                id: ": "14",
-                supplier14",
-                supplier: ": "APERAPERITIVITIVOO",
-                name",
-                name: ": "PASTPASTEL DEEL DE CARNE CARNE",
-               ",
-                organization: organization: "UN "UNIDADEIDADE",
-               ",
-                currentQuantity currentQuantity: : 0.0.00,
-                history,
-                history:: [
-                    { date: [
-                    { date: "2025- "2025-05-05-27", quantity:27", quantity: 10 10.0.0, action, action: ": "registroregistro histórico" },
-                    histórico" },
-                    { date { date: ": "20252025-06-06-05-05",", quantity quantity: : 0.0.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "2025-06-13", quantity: 0 "2025-06-13", quantity: 0.0, action.0, action: "registro histórico": "registro histórico" },
-                    },
-                    { date { date: ": "20252025-07-07-21-21", quantity", quantity: : 0.0.0,0, action: "regist action: "registro históricoro histórico"" },
-                    { },
-                    { date: date: "2025- "2025-08-08-05",05", quantity: quantity: 0 0.0.0, action: ", action: "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-08-08-15", quantity-15", quantity: : 0.0.0,0, action: action: "regist "registro históricoro histórico"" }
-                }
-                ]
-            ]
-            },
-            },
-            {
-                id {
-                id: ": "15",
-                supplier15",
-                supplier: ": "CHURRASCOCHURR",
-               ASCO",
-                name: name: "H "HAMBURAMBURGUERGUER WAG WAGYUYU",
-                organization: "",
-                organization: "CAIXCAIXINHAINHA C/ C/ 2 2 UNIDADES UNIDADES",
-                current",
-                currentQuantity:Quantity: 1 1.0.0,
-                history:,
+                id: "14",
+                supplier: "APERITIVO",
+                name: "PASTEL DE CARNE",
+                organization: "UNIDADE",
+                currentQuantity: 0.0,
                 history: [
-                    [
-                    { date { date: ": "20252025-04-04-17-17", quantity", quantity: : 1.0,1.0, action: action: "regist "registro histórico"ro histórico" },
-                    { },
-                    { date: date: " "2022025-04-5-24",04- quantity:24", 1 quantity: 1.0.0, action:, action: " "registro histórico" },
-                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-08", quantity: 1.0, action: "registregistro histórico" },
-                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-08",ro histórico quantity: 1.0, action: "registro histórico" },
-                    { date: "" },
-                    { date: "20252025-05-05-27", quantity-27", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-06-06-05",05", quantity: quantity: 1 1.0.0, action, action: "registro: " histórico"registro },
-                    histórico" },
-                    { date { date: ": "2025-062025-06-13-13", quantity", quantity: : 1.1.0,0, action: action: "registro histórico "registro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-07-21", quantity07-21", quantity: 1: 1.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: "2025: "2025-08-08-05-05", quantity", quantity: : 11.0,.0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date date:: "202 "2025-5-08-08-15",15", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" }
-                }
+                    { date: "2025-05-27", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
                 ]
-            ]
-            },
             },
             {
-                {
-                id: id: "16 "16",
-                supplier:",
-                supplier: "CH "CHURRASURRASCO",
-                nameCO: "",
-                name: "HAMBHAMBURGUURGUER PERER PERDIZDIZES",
-                organizationES",
-                organization: ": "UNIDUNIDADEADE",
-                current",
-                currentQuantity:Quantity:  99.0.0,
-               ,
-                history: history: [
-                    { date [
-                    { date: ": "20252025-05-05-27-27", quantity", quantity: : 10.10.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-06-05",06- quantity:05", quantity: 10 10.0.0, action, action: "registro: " histórico"registro histórico" },
-                    },
-                    { date { date: ": "2025-062025-13-06-13", quantity", quantity: : 10.10.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "2025-07- "2025-07-21",21", quantity: 9 quantity: 9.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-08-08-05-05", quantity: ", quantity: 9.9.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { date: },
-                    { date: "202 "2025-5-08-15",08-15", quantity: quantity: 9 9.0.0, action, action: "registro: "registro histórico" }
-                histórico" }
+                id: "15",
+                supplier: "CHURRASCO",
+                name: "HAMBURGUER WAGYU",
+                organization: "CAIXINHA C/ 2 UNIDADES",
+                currentQuantity: 1.0,
+                history: [
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
                 ]
-            ]
-            },
             },
             {
-                id {
-                id:: "17 "17",
-               ",
-                supplier: supplier: "CH "CHURRASCOURRASCO",
-                name",
-                name: ": "PÃOPÃO DE H DE HAMBURAMBURGUER",
-               GUER",
-                organization: organization: "UN "UNIDADEIDADE",
-               ",
-                currentQuantity currentQuantity: 14.: 14.0,
-                history0,
-                history:: [
-                    { [
-                    { date: "202 date: "2025-5-05-05-27",27", quantity: quantity: 14 14.0, action.0, action: ": "registroregistro histórico" histórico" },
-                    { date },
-                    { date: "2025-06: "2025-05-06-05", quantity", quantity: 14.0,: 14.0, action: "regist action:ro histórico "registro histórico"" },
-                    { date: "202 },
-                    { date: "2025-5-06-06-13",13", quantity: quantity: 14.0 14.0, action, action: ": "registroregistro histórico" histórico" },
-                    { date },
-                    { date: ": "20252025-07-07-21-21", quantity: ", quantity14.: 14.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { date: },
-                    { date: "202 "2025-5-08-05",08-05", quantity: 14 quantity: 14.0, action: "registro histórico" },
+                id: "16",
+                supplier: "CHURRASCO",
+                name: "HAMBURGUER PERDIZES",
+                organization: "UNIDADE",
+                currentQuantity: 9.0,
+                history: [
+                    { date: "2025-05-27", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 10.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 9.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 9.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 9.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "17",
+                supplier: "CHURRASCO",
+                name: "PÃO DE HAMBURGUER",
+                organization: "UNIDADE",
+                currentQuantity: 14.0,
+                history: [
+                    { date: "2025-05-27", quantity: 14.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 14.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 14.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 14.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 14.0, action: "registro histórico" },
                     { date: "2025-08-15", quantity: 14.0, action: "registro histórico" }
                 ]
             },
             {
                 id: "18",
                 supplier: "CHURRASCO",
-                name: "QUEIJO CHEDDAR PCT.0, action: "registro histórico" },
-                    { date: "2025-08-15", quantity: 14.0, action: "registro histórico" }
+                name: "QUEIJO CHEDDAR PCTE",
+                organization: "PCTE",
+                currentQuantity: 2.0,
+                history: [
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 2.0, action: "registro histórico" }
                 ]
             },
             {
-                id: "18",
+                id: "19",
                 supplier: "CHURRASCO",
-                name: "QUEIJO CHEDDAR PCTEE",
-                organization",
-                organization: ": "PCTPCTEE",
-                current",
-                currentQuantity:Quantity: 2 2.0.0,
-                history:,
+                name: "PÃO DE ALHO SANTA MASSA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0,
                 history: [
-                    [
-                    { date { date: ": "20252025-04-04-17-17", quantity", quantity: : 1.1.0,0, action: action: "regist "registroro histórico histórico" },
-                    {" },
-                    { date: date: "202 "2025-5-04-24",04-24", quantity: quantity: 1 1.0.0, action, action: ": "registro histórico"registro histórico" },
-                    },
-                    { date { date: ": "2025-05-2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
                     { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "20",
+                supplier: "CHURRASCO",
+                name: "QUEIJO COALHO QUATÁ",
+                organization: "UNIDADE",
+                currentQuantity: 4.0,
+                history: [
+                    { date: "2025-04-17", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 2.0, action: "registro histórico" },
                     { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
                     { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-1302", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 2.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 4.0, action: "registro histórico" }
+                ]
+            },
+            {
+                id: "21",
+                supplier: "CHURRASCO",
+                name: "LINGUIÇA BOMBINHA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0,
+                history: [
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
                     { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
-                    { date: "2025-05-27", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-05", quantity: 2.0, action: "registro histórico" },
-                    { date: "2025-06-13", quantity", quantity: : 2.2.0, action0, action:: "regist "registro histórico"ro histórico" },
-                    { },
-                    { date: date: "202 "2025-5-07-07-21",21", quantity: quantity:  22.0.0, action, action: ": "registroregistro histórico" },
-                    histórico" },
-                    { date: " { date2025: "202-085-08-05-05", quantity: ", quantity2.: 2.0,0, action: "registro histórico" },
-                    { date: "202 action: "registro histórico" },
-                    { date: "2025-5-08-08-15",15", quantity: quantity: 2 2.0, action.0: ", actionregistro: "registro histórico" histórico" }
-                }
-                ]
-            ]
-            },
-            },
-            {
-                {
-                id: " id:19",
-                "19 supplier:",
-                "CH supplier: "CHURRASURRASCO",
-                nameCO: "",
-                namePÃO: " DE ALPÃO DE ALHO SANHO SANTA MASTA MASSASA",
-                organization",
-                organization: ": "UNIDUNIDADEADE",
-                current",
-                currentQuantity:Quantity: 1 1.0.0,
-               ,
-                history: history: [
-                    [
-                    { date: " { date: "20252025-04-04-17-17", quantity", quantity: 1.: 1.0,0, action: action: "regist "registro histórico"ro histórico" },
- },
-                    {                    { date: date: "2025 "2025-04--04-24",24", quantity: quantity: 1 1.0.0, action, action: "registro: "registro histórico" histórico" },
-                    },
-                    { date { date: ": "2025-052025-05-02-02", quantity", quantity: : 1.1.0, action:0, action: "regist "registro históricoro histórico"" },
-                    { date: },
-                    { date: "202 "2025-5-05-08",05-08", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: "2025: "2025--0505-27-27", quantity", quantity: : 1.0,1.0, action: action: "regist "registro históricoro histórico" },
-                    {" },
-                    { date: date: "202 "2025-5-06-06-05",05", quantity: quantity: 1 1.0.0, action, action: ": "registro histórico"registro histórico" },
-                    },
-                    { date { date: ": "20252025-06-06--13", quantity: 1.13", quantity: 1.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-07-07-21",21", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: "2025: "2025-08-08-05-05", quantity", quantity: : 1.0, action: "registro histórico"1.0, action: "registro histórico" },
-                    { date: },
-                    { date: "202 "2025-5-08-15",08- quantity:15", quantity: 1.0, action 1: ".0, action: "registroregistro histórico" histórico" }
-                }
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" }
                 ]
             },
             {
-                ]
-            },
-            id: {
-                id: "20 "20",
-                supplier",
-                supplier:: " "CHURRCHURRASCOASCO",
-                name",
-                name: "QUEI: "QUEIJO COJO COALHOALHO QUAT QUATÁÁ",
-                organization",
-                organization: ": "UNIDUNIDADEADE",
-                current",
-                currentQuantity:Quantity: 4 4.0.0,
-                history:,
+                id: "22",
+                supplier: "CHURRASCO",
+                name: "DRUMET DE FRANGO",
+                organization: "UNIDADE",
+                currentQuantity: 0.0,
                 history: [
-                    [
-                    { date { date: ": "2025-042025-17-04-17", quantity", quantity: : 2.0,2.0, action action: "regist: "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "20255-04--04-24",24", quantity: quantity: 2 2.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-05-02-02", quantity", quantity: 2.: 2.0,0, action: "regist action: "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-05-05-08",08", quantity: quantity: 2 2..00, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-05-27-27", quantity", quantity: : 2.2.0,0, action: action: "regist "registro histórico"ro histórico" },
-                    { },
-                    { date: date: "202 "2025-5-06-06-05", quantity:05", 2 quantity: 2.0.0, action, action: ": "registroregistro histórico" },
-                    histórico" { date },
-                    { date: ": "20252025-06-06-13-13", quantity", quantity: : 2.2.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { date: "2025- },
-                    { date: "2025-07-07-21",21", quantity: 2 quantity:.0 2.0, action, action: "registro histórico" },
-                   : "registro histórico" },
-                    { date { date: ": "20252025-08-08-05-05", quantity: ", quantity: 4.4.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-08-15",08-15", quantity: quantity: 4 4.0.0, action, action: ": "registroregistro histórico" }
-                histórico" }
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
                 ]
-            ]
-            },
             },
             {
-                {
-                id: id: "21",
-                "21",
-                supplier: supplier: "CHURRAS "CHCOURRASCO",
-                name",
-                name: ": "LINGLINGUIÇUIÇA BA BOMBOMBINHAINHA",
-               ",
-                organization: organization: "UN "UNIDADEIDADE",
-               ",
-                currentQuantity currentQuantity: 1.: 1.0,
-                history0,
-                history:: [
-                    { [
-                    { date: "202 date: "2025-5-04-04-17",17", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date: " { date: "20252025-04-04-24", quantity-24", quantity: : 1.1.0,0, action: action: "registro histórico "registro histórico"" },
-                    { },
-                    { date: date: "202 "2025-05-5-05-02",02", quantity: quantity: 1 1.0, action.0, action: ": "registroregistro histórico" histórico" },
-                    { date: "2025-05 },
-                    { date: "2025-05-08-08", quantity", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico" },
-                   " },
-                    { { date: date: "202 "2025-5-05-05-27",27", quantity: quantity: 1.0, action: "registro 1.0, action: "registro histórico" },
-                    { date: "2025-06 histórico" },
-                    { date: "2025-05-06-05", quantity", quantity: : 1.1.0,0, action: action: "registro histórico "registro histórico"" },
-                    { },
-                    { date: date: "202 "2025-065-06--13",13", quantity: quantity: 1 1.0.0, action: ", action: "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-07-07-21-21", quantity", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { date: "202 },
-                    {5- date: "2025-08-08-05",05", quantity: quantity: 1 1.0, action.0, action: "registro: " histórico"registro },
-                    histórico" { date },
-                   : " { date: "2025-082025-15-08-15", quantity", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico"" }
-                }
-                ]
-            ]
-            },
-            },
-            {
-                id {
-                id: ": "2222",
-                supplier",
-                supplier: ": "CHURRCHURRASCOASCO",
-               ",
-                name: name: "DR "DRUMUMETET DE FR DE FRANGOANGO",
-               ",
-                organization: organization: "UN "UNIDADEIDADE",
-               ",
-                currentQuantity currentQuantity: : 0.0.00,
-                history,
+                id: "23",
+                supplier: "CHURRASCO",
+                name: "FILÉ DE FRANGO",
+                organization: "UNIDADE",
+                currentQuantity: 0.0,
                 history: [
-                    {: [
-                    { date: date: "202 "2025-5-04-04-17", quantity:17", quantity: 1 1.0.0, action, action: ": "registro histórico"registro histórico" },
-                    },
-                    { date { date: ": "20252025-04-24-04-24", quantity", quantity: : 1.1.0,0, action: "regist action: "registro históricoro histórico"" },
-                    { },
-                    { date: date: "2025- "2025-05-05-02",02", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-05-08-08", quantity: ", quantity: 1.1.0,0, action: action: "regist "registro histórico"ro histórico" },
-                    { },
-                    { date: date: "202 "2025-5-05-27",05-27", quantity: 1 quantity: 1.0.0, action, action: ": "registroregist histórico" },
-                   ro histórico" },
-                    { date { date: ": "20252025-06-06-05", quantity-05", quantity: : 1.1.0,0, action: "regist action: "registro históricoro histórico"" },
-                    { },
-                    { date: "202 date: "2025-5-06-06-13",13", quantity: quantity: 1 1.0.0, action: ", action: "registroregistro histórico" histórico" },
-                    },
-                    { date { date: "2025: "2025-07-07-21-21", quantity", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-08-08-05",05", quantity: quantity: 0 0.0.0, action, action: ": "registroregistro histórico histórico"" },
-                    },
-                    { date { date: ": "20252025-08-15", quantity-08: -15", quantity: 0.0.00, action:, action: "registro histórico" "regist }
-ro histórico" }
-                ]
-                           ]
-            },
-            },
-            {
-                id {
-                id: ": "2323",
-                supplier",
-                supplier: ": "CHURRCHURRASCOASCO",
-               ",
-                name: name: "FILÉ DE "FILÉ DE FRAN FRANGOGO",
-                organization",
-                organization: ": "UNIDUNIDADE",
-                currentADE",
-                currentQuantity:Quantity: 0 0.0.0,
-               ,
-                history: history: [
-                    [
-                    { date: " { date: "20252025-04-04-17-17", quantity", quantity: 1.: 1.0,0, action: action: "regist "registro históricoro histórico" },
-                    {" },
-                    { date: date: "202 "2025-5-0404--24", quantity:24", quantity: 1 1.0.0, action, action: ": "registro histórico"registro histórico" },
-                    },
-                    { date { date: ": "20252025-05-02-05-02", quantity", quantity: : 1.1.0,0, action: "regist action: "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-05-05-08",08", quantity: 1 quantity: 1.0.0,, action action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "20252025-05-05-27-27",", quantity quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-06-06-05",05", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    { date },
-                    { date: ": "20252025-06-06-13-13", quantity", quantity: : 1.1.0, action:0, action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date date:: "2025- "2025-07-21",07-21", quantity: quantity: 0.0 0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date: " { date: "20252025-08-08-05-05", quantity: ", quantity: 0.0.0,0, action: action: "regist "registro histórico"ro histórico" },
-                    { },
-                    { date: date: "202 "2025-5-08-08-15",15", quantity: 0.0, action quantity:: " 0.0, action: "registro histórico"registro }
-                histórico" }
+                    { date: "2025-04-17", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 0.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 0.0, action: "registro histórico" }
                 ]
             },
             {
-                ]
-            },
-            {
-                id: "24 id: "24",
-",
-                               supplier: supplier: "N "NATURALATURAL BRAS BRASILIL",
-                name",
-                name: ": "ÁGÁGUA DEUA DE COCO COCO - 1 L - 1 L",
-               ",
-                organization: organization: "UN "UNIDADEIDADE",
-                currentQuantity",
-                currentQuantity: : 6.06.0,
-                history,
-                history:: [
-                    { [
-                    { date: date: "202 "2025-5-04-04-17",17", quantity: quantity: 12 12.0, action.0, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date: " { date: "20252025-04-04-24-24", quantity", quantity: 6.: 6.0,0, action: action: "regist "registro históricoro histórico" },
-                   " },
-                    { { date: date: "2025- "2025-05-05-02",02", quantity: quantity: 4 4.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date { date: ": "2025-052025-05-08-08", quantity", quantity: : 4.4.0, action:0, action: "regist "registro histórico" },
-                    {ro histórico" },
-                    { date: date: "202 "2025-5-05-05-27",27", quantity: quantity: 4 4.0, action.0, action: ": "registroregistro histórico" histórico" },
-                    },
-                    { date: " { date: "20252025-06-06-05-05", quantity", quantity: : 6.6.0,0, action: action: "regist "registro históricoro histórico"" },
-                    { },
-                    { date: date: "202 "2025-5-06-06-13",13", quantity: quantity: 4 4.0.0, action, action: ": "registroregistro histórico" histórico" },
-                    { date },
-                    { date: ": "20252025-07-21-07", quantity-21", quantity: : 1.1.0,0, action: action: "registro histórico "registro histórico"" },
-                    { },
-                    { date: date: "2025-08-05", quantity: 4 "2025-08-05", quantity: 4.0.0, action, action: "registro: "regist histórico" },
-                   ro { date histórico" },
-                    { date: ": "2025-082025-08-15-15", quantity", quantity: : 6.6.0, action:0, action "regist: "registro históricoro histórico"" }
-                }
-                ]
-            },
-            ]
-            },
-            {
-                id {
-                id: ": "2525",
-                supplier",
-                supplier: "KIB: "KIBOMOM",
-                name",
-                name: ": "SKINSKINBOM",
-               BOM",
-                organization: organization: "UN "UNIDADEIDADE",
-               ",
-                currentQuantity currentQuantity: 8.: 8.0,0, //  // 8CX8CX
-               
-                history: history: [
-                    { date [
-                    { date: ": "20252025-08-08-05-05", quantity", quantity: 5.: 5.0,0, action: action: "regist "registro históricoro histórico" }," }, // 5CX // 5CX
-                   
-                    { date { date: ": "20252025-08-15-08-15", quantity", quantity: 8.: 8.0,0, action: " action: "registregistro históricoro histórico" }" } //  // 8CX8CX
-                ]
-           
-                ]
-            },
-            },
-            {
-                {
-                id: id: "26 "26",
-               ",
-                supplier: "FINA supplier: "F",
-                name: "INA",
-                name: "TOSTOSCANA",
-               CANA",
-                organization: "UN organization:IDADE",
-                "UNIDADE",
-                currentQuantity:  currentQuantity: 1.1.0,0, //  // 1PC1PC
-               
-                history: history: [
-                    [
-                    { date: " { date: "20252025-08--0805", quantity-05", quantity: : 1.1.0,0, action: "registro action: "registro histórico histórico" }, // 1PC
-                   " }, // 1PC
-                    { date: "2025 { date: "2025-08-08-15-15", quantity", quantity: : 1.1.00,, action: action: "regist "registro históricoro histórico" }" } //  // 1PC1PC
-               
-                ]
-            ]
-            },
-            },
-            {
-                {
-                id: id: "27 "27",
-                supplier:",
-                supplier: "BR "BRASAASA",
-                name",
-                name: ": "TOSTOSCANACANA",
-               ",
-                organization: organization: "UN "UNIDADE",
-               IDADE",
-                current currentQuantity:Quantity: 1.0, //  1.0, // 1PC1PC
-               
-                history: history: [
-                    [
-                    { date { date: ": "20252025-08-08-05-05", quantity", quantity: : 1.1.0,0, action: action: "regist "registro históricoro histórico" }," }, //  // 1PC1PC
-                    { date
-                    { date: ": "20252025-08-08-15-15", quantity: ", quantity: 1.1.0,0, action: "regist action: "registro históricoro histórico" }" } //  // 1PC1PC
-                ]
-           
-                ]
-            },
-            },
-            {
-                id: {
-                id: "28 "28",
-               ",
-                supplier: supplier: "SW "SWIFT",
-                nameIFT",
-                name: ": "TOSTOSCANACANA",
-               ",
-                organization: "UN organization: "UNIDADEIDADE",
-               ",
-                currentQuantity currentQuantity: : 1.0,1.0, //  // 1PC1PC
-               
-                history: history: [
-                    { date [
-                    { date: ": "20252025-08-08-05-05", quantity: ", quantity: 1.1.0,0, action: action: "regist "registro históricoro histórico" }, // " }, // 1PC1PC
-                   
-                    { date { date: "2025: "2025-08-08-15-15", quantity", quantity: 1.0,: 1. action:0, action: "regist "registro históricoro histórico" }" } // 1PC // 
-               1PC ]
-           
-                ]
-            },
-            },
-            {
-                {
-                id: "29 id:",
-                "29",
-                supplier: "S supplier: "SADIAADIA",
-               ",
-                name: "T name:OSCANA "TOSCANA",
-                organization",
-                organization: ": "UNIDUNIDADEADE",
-                current",
-                currentQuantity: 1Quantity: 1.0.0, //, // 1 1PC
-               PC history:
+                id: "24",
+                supplier: "NATURAL BRASIL",
+                name: "ÁGUA DE COCO - 1 L",
+                organization: "UNIDADE",
+                currentQuantity: 6.0,
                 history: [
-                    { [
-                    { date: date: "202 "2025-5-08-05",08-05", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" }, // }, // 1 1PCPC
-                    {
-                    { date: " date:2025- "2025-08-08-15",15", quantity:  quantity:1.0 1, action.0: ", action: "registroregistro histórico" histórico" } } // // 1 1PCPC
-               
+                    { date: "2025-04-17", quantity: 12.0, action: "registro histórico" },
+                    { date: "2025-04-24", quantity: 6.0, action: "registro histórico" },
+                    { date: "2025-05-02", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-05-08", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-05-27", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-06-05", quantity: 6.0, action: "registro histórico" },
+                    { date: "2025-06-13", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-07-21", quantity: 1.0, action: "registro histórico" },
+                    { date: "2025-08-05", quantity: 4.0, action: "registro histórico" },
+                    { date: "2025-08-15", quantity: 6.0, action: "registro histórico" }
                 ]
-            ]
-            },
             },
             {
-                id {
-                id: ": "3030",
-               ",
-                supplier: " supplier: "OUROOURO",
-               ",
-                name: name: "P "PICANHAICANHA",
-                organization",
-                organization: ": "UNIDUNIDADEADE",
-                current",
-                currentQuantity:Quantity: 1 1.0.0, //, // 1 1PCPC
-                history
-                history:: [
-                    { [
-                    { date: date: "202 "2025-5-08-08-05",05", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" }, }, // // 1PC 1PC
-                    {
-                    { date: date: "202 "2025-5-08-08-15",15", quantity: quantity: 1 1.0.0, action: ", action: "registroregistro histórico histórico"" } // } // 1PC 1PC
-               
-                ]
-            ]
-            },
-            },
-            {
-                id {
-                id: ": "3131",
-                supplier",
-                supplier: ": "SWIFT",
-               SWIFT",
-                name: name: "P "PICANICANHA",
-                organizationHA",
-                organization: ": "UNIDUNIDADEADE",
-                current",
-                currentQuantity:Quantity: 1.0 1.0, //, // 1 1PCPC
-                history
+                id: "25",
+                supplier: "KIBOM",
+                name: "SKINBOM",
+                organization: "UNIDADE",
+                currentQuantity: 8.0, // 8CX
                 history: [
-                    {: [
-                    { date: date: "202 "2025-5-08-08-05",05", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" }, // }, // 1 1PCPC
-                    {
-                    { date: date: "202 "2025-5-08-08-15",15", quantity: quantity: 1 1.0.0, action, action: ": "registroregistro histórico" histórico" } // } // 1 1PCPC
-               
+                    { date: "2025-08-05", quantity: 5.0, action: "registro histórico" }, // 5CX
+                    { date: "2025-08-15", quantity: 8.0, action: "registro histórico" } // 8CX
                 ]
-            ]
+            },
+            {
+                id: "26",
+                supplier: "FINA",
+                name: "TOSCANA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            },
+            {
+                id: "27",
+                supplier: "BRASA",
+                name: "TOSCANA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            },
+            {
+                id: "28",
+                supplier: "SWIFT",
+                name: "TOSCANA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            },
+            {
+                id: "29",
+                supplier: "SADIA",
+                name: "TOSCANA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            },
+            {
+                id: "30",
+                supplier: "OURO",
+                name: "PICANHA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
+            },
+            {
+                id: "31",
+                supplier: "SWIFT",
+                name: "PICANHA",
+                organization: "UNIDADE",
+                currentQuantity: 1.0, // 1PC
+                history: [
+                    { date: "2025-08-05", quantity: 1.0, action: "registro histórico" }, // 1PC
+                    { date: "2025-08-15", quantity: 1.0, action: "registro histórico" } // 1PC
+                ]
             }
-        }
         ];
 
-        let ];
+        let products = [];
+        let isOnline = false;
+        let pendingChanges = [];
+        let productToDelete = null;
 
-        let products = products = [];
-        let is [];
-        let isOnline = falseOnline = false;
-        let;
-        let pendingChanges pendingChanges = [];
-        let = [];
-        let productTo productToDelete =Delete = null null;
-
-        //;
-
-        // Função Função para atualizar o para atualizar o status de status de conexão conexão
-       
-        function update function updateConnectionStatusConnectionStatus(connected(connected)) {
-            isOnline = {
+        // Função para atualizar o status de conexão
+        function updateConnectionStatus(connected) {
             isOnline = connected;
-            const indicator = document.getElementById connected;
-            const indicator =('syncIndicator');
+            const indicator = document.getElementById('syncIndicator');
             const text = document.getElementById('syncText');
-
-            if (connected) {
-                indicator.className = 'sync-indicator sync-online document.getElementById('syncIndicator');
-            const text = document.getElementById('syncText');
-
+            
             if (connected) {
                 indicator.className = 'sync-indicator sync-online';
-               ';
-                text.text text.textContent = 'ConContent =ectado 'Conectado e sinc e sincronizadoronizado';
-
-               ';
-
-                // Process // Processar mudar mudanças pendanças pendentes seentes se houver houver
-               
-                processPending processPendingChangesChanges();
-();
-            } else            } else {
-                indicator {
-                indicator.className.className = ' = 'sync-indsync-indicator sync-offlineicator sync-offline';
-               ';
-                text.text text.textContent =Content = 'Off 'Offline - Alteraçõesline - Alterações serão sincronizadas quando online serão sinc';
-           ronizadas quando online }
-       ';
+                text.textContent = 'Conectado e sincronizado';
+                
+                // Processar mudanças pendentes se houver
+                processPendingChanges();
+            } else {
+                indicator.className = 'sync-indicator sync-offline';
+                text.textContent = 'Offline - Alterações serão sincronizadas quando online';
             }
         }
 
-        }
-
-        // Ver // Verificar status de conexificar statusão de conexão
-        fire
-        firebase.dbase.database().atabase().ref('.ref('.info/info/connected').connected').on('value',on('value', function(s function(snapshotnapshot)) {
-            update {
-            updateConnectionStatus(snConnectionStatusapshot.val(snapshot.val() ===() === true true);
-       );
+        // Verificar status de conexão
+        firebase.database().ref('.info/connected').on('value', function(snapshot) {
+            updateConnectionStatus(snapshot.val() === true);
         });
 
-        // });
-
-        // Função Função para carregar para carregar produtos do produtos do Firebase Firebase
-        function
-        function loadProducts loadProductsFromFireFromFirebase(cbase(callback)allback) {
-            const products {
-            const productsRef =Ref = database.ref database.ref('products('products');
-
-           ');
-
-            productsRef.on(' productsRef.on('value',value', (sn (snapshot)apshot) => => {
-                const {
-                const data = data = snapshot.val();
-                snapshot.val();
+        // Função para carregar produtos do Firebase
+        function loadProductsFromFirebase(callback) {
+            const productsRef = database.ref('products');
+            
+            productsRef.on('value', (snapshot) => {
+                const data = snapshot.val();
                 if (data) {
-                    if (data) {
-                    // Converter // Converter objeto do objeto do Firebase em Firebase em array array
-                    products
-                    products = Object = Object.keys(data.keys(data).map).map(key =>(key => {
-                        {
+                    // Converter objeto do Firebase em array
+                    products = Object.keys(data).map(key => {
                         return {
-                            id return {
-                            id: key: key,
-                            ...data,
-                            ...data[key[key]
-                       ]
+                            id: key,
+                            ...data[key]
                         };
- };
                     });
-
-                    //                    });
-
-                    // Orden Ordenar produtosar produtos por ID por ID
-                   
-                    products.sort products.sort((a((a, b, b) =>) => parseInt(a parseInt(a.id).id) - parseInt(b.id - parseInt(b.id));
-
-                   ));
-
-                    if ( if (callback)callback) callback callback();
-                }();
-                } else else {
- {
-                    //                    // Se não Se não houver houver dados no Firebase, dados no usar dados Firebase, usar dados inicia iniciaisis
-                    initialize
-                    initializeWithDefaultWithDefaultDataData();
-                    if();
-                    if (callback) callback (callback) callback();
-               ();
+                    
+                    // Ordenar produtos por ID
+                    products.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+                    
+                    if (callback) callback();
+                } else {
+                    // Se não houver dados no Firebase, usar dados iniciais
+                    initializeWithDefaultData();
+                    if (callback) callback();
                 }
-            }
-            }, ( }, (error)error) => {
-                console => {
-                console.error(".error("ErroErro ao car ao carregarregar dados:", dados:", error error);
-);
-                //                // Em caso Em caso de erro de erro, tent, tentar carregarar car do localStorageregar do localStorage como fall como fallbackback
-                load
-                loadFromLocalStorageFromLocal();
-                ifStorage();
-                if (callback (callback) callback) callback();
-           ();
+            }, (error) => {
+                console.error("Erro ao carregar dados:", error);
+                // Em caso de erro, tentar carregar do localStorage como fallback
+                loadFromLocalStorage();
+                if (callback) callback();
             });
-        });
         }
 
-        }
-
-        // Função para // Função para inicializar inicializar com dados com dados padrão padrão
-
-        function initialize        function initializeWithDefaultData() {
-            // VerWithDefaultData() {
-            // Verificar seificar se já temos já temos dados no dados no localStorage localStorage
-            const
-            const storedProducts storedProducts = localStorage = localStorage.getItem('.getItem('frozenfrozenProductsWithProductsWithHistoryHistory');
-
-            if');
-
-            if (!storedProducts (!storedProducts)) {
-                // {
-                // Se não Se não houver houver dados salvos, dados salvos, usar os usar os dados in dados iniciaisiciais da plan da planilhailha
-               
-                products = products = [...initial [...initialProductsProducts];
-                save];
-                saveToLocalToLocalStorage(Storage(productsproducts);
-
-                //);
-
-                // Salvar Salvar também no também no Firebase se Firebase se estiver estiver online online
-                if
-                if (is (isOnline)Online) {
-                    {
-                    saveProducts saveProductsToFireToFirebase(base(productsproducts);
-               );
+        // Função para inicializar com dados padrão
+        function initializeWithDefaultData() {
+            // Verificar se já temos dados no localStorage
+            const storedProducts = localStorage.getItem('frozenProductsWithHistory');
+            
+            if (!storedProducts) {
+                // Se não houver dados salvos, usar os dados iniciais da planilha
+                products = [...initialProducts];
+                saveToLocalStorage(products);
+                
+                // Salvar também no Firebase se estiver online
+                if (isOnline) {
+                    saveProductsToFirebase(products);
                 }
-            } }
-            } else else {
-                // {
+            } else {
                 // Carregar dados do localStorage
-                load CarregFromar dados do localStorage
-               LocalStorage loadFromLocalStorage();
-           ();
+                loadFromLocalStorage();
             }
         }
-        }
-
-        // Função para salvar }
 
         // Função para salvar produtos no Firebase
-        function produtos no Firebase
-        function saveProducts saveProductsToFireToFirebase(base(products)products) {
-            {
-            // Converter // Converter array para array para objeto para o Firebase objeto para o Firebase
-           
-            const products const productsObj =Obj = {};
-            {};
-            products.forEach(product => products.forEach(product => {
-                {
-                productsObj productsObj[product[product.id].id] = product = product;
-           ;
+        function saveProductsToFirebase(products) {
+            // Converter array para objeto para o Firebase
+            const productsObj = {};
+            products.forEach(product => {
+                productsObj[product.id] = product;
             });
-
-            });
-
-            return database return database.ref('.ref('products').products').set(set(productsObjproductsObj)
-               )
-                .then .then(() => {
-                   (() => {
-                    console.log console.log("D("Dados salvos noados salvos no Firebase com Firebase com sucesso sucesso");
-                   ");
-                    // Tamb // Também salém salvar novar no localStorage como localStorage como backup backup
-                    save
-                    saveToLocalToLocalStorage(Storage(productsproducts);
-                    return);
-                    return true true;
+            
+            return database.ref('products').set(productsObj)
+                .then(() => {
+                    console.log("Dados salvos no Firebase com sucesso");
+                    // Também salvar no localStorage como backup
+                    saveToLocalStorage(products);
+                    return true;
                 })
-                .;
-                })
-                .catch((catch((error)error) => => {
-                    console.error(" {
-                    console.error("ErroErro ao sal ao salvar novar no Firebase:", Firebase:", error);
- error                    // Se fal);
-                    // Se falhar,har, salvar salvar apenas no apenas no localStorage e localStorage e marcar marcar como pend como pendenteente
-                    save
-                    saveToLocalToLocalStorage(Storage(productsproducts);
-                    pendingChanges.push);
-                    pendingChanges.push({ type({ type: ': 'fullUpdatefullUpdate', data', data: products });
-                   : products return false });
-                    return false;
-               ;
-                });
-        });
-        }
-
-        }
-
-        // // Fun Função para atualizarção para atualizar um produto um produto específico específico no Firebase no Firebase
-        function update
-       ProductIn function updateProductInFirebaseFirebase(product)(product) {
-            {
-            return database.ref('products/' return database + product.ref('products/' + product.id)..id).set(productset(product)
-               )
-                .then .then(() => {
-                   (() => {
-                    console.log console.log("Prod("Produto atualuto atualizado no Firebaseizado no Firebase:", product.id:", product.id);
-                   );
-                    // At // Atualizarualizar também no também no localStorage
-                    update localStorage
-                   InLocal updateInLocalStorage(productStorage(product);
-                   );
-                    return true return true;
-                })
-               ;
-                })
-                .catch .catch((error((error) =>) => {
-                    console {
-                   .error("Er console.error("Erro aoro ao atualizar atualizar produto no produto no Firebase:", Firebase:", error);
-                    // error);
-                    // Se falhar, Se falhar, salvar salvar no localStorage no localStorage e mar e marcar como pendentecar como pendente
-                   
-                    updateIn updateInLocalStorageLocalStorage(product(product);
-                    pendingChanges.push);
-                    pendingChanges.push({ type({ type: ': 'update',update', data: data: product product });
-                    return });
+                .catch((error) => {
+                    console.error("Erro ao salvar no Firebase:", error);
+                    // Se falhar, salvar apenas no localStorage e marcar como pendente
+                    saveToLocalStorage(products);
+                    pendingChanges.push({type: 'fullUpdate', data: products});
                     return false;
                 });
-        false;
-                });
         }
 
-        // }
-
-        // Função para ad Função para adicionaricionar um novo um novo produto no produto no Firebase Firebase
-        function addProduct
-        function addProductToFireToFirebase(productbase(product)) {
-            // {
-            // Gerar um ID Gerar um ID único usando único usando o timestamp o timestamp
-           
-            const new const newId = Date.nowId = Date.now().toString().toString();
-           ();
-            product.id product.id = new = newIdId;
-
-            return;
-
-            return database.ref database.ref('products('products/' +/' + newId newId).set).set(product(product)
-                .)
-                .then(() =>then(() => {
-                    console {
-                    console.log(".log("Produto adProdutoicionado ao adicionado ao Firebase:", Firebase:", newId newId);
-                   );
-                    // Ad // Adicionaricionar também no também no localStorage localStorage
-                    add
-                    addToLocalToLocalStorage(productStorage(product);
-                   );
-                    return new return newIdId;
-               ;
+        // Função para atualizar um produto específico no Firebase
+        function updateProductInFirebase(product) {
+            return database.ref('products/' + product.id).set(product)
+                .then(() => {
+                    console.log("Produto atualizado no Firebase:", product.id);
+                    // Atualizar também no localStorage
+                    updateInLocalStorage(product);
+                    return true;
                 })
- })
-                .                .catch((catch((error) =>error) => {
-                    console.error("Erro ao ad {
-                    console.error("Erro ao adicionaricionar produto no produto no Firebase:", Firebase:", error error);
-                    // Se fal);
-                    // Se falhar,har, salvar salvar no localStorage no localStorage e mar e marcar como pendentecar como pendente
-                   
-                    addTo addToLocalStorageLocalStorage(product(product);
-                    pendingChanges.push);
-                    pendingChanges.push({ type({ type: ': 'add',add', data: product data: product });
-                    return });
-                    return newId newId;
-               ;
+                .catch((error) => {
+                    console.error("Erro ao atualizar produto no Firebase:", error);
+                    // Se falhar, salvar no localStorage e marcar como pendente
+                    updateInLocalStorage(product);
+                    pendingChanges.push({type: 'update', data: product});
+                    return false;
                 });
-        });
         }
 
-        }
-
-        // Função para // Fun excluirção para excluir um produto um produto do Firebase do Firebase
-       
-        function delete function deleteProductFromProductFromFirebaseFirebase(productId(productId)) {
-            return {
-            return database.ref database.ref('products('products/' +/' + productId productId).remove).remove()
-               ()
-                .then(() => .then(() => {
-                    {
-                    console.log console.log("Prod("Produto excluto excluídouído do Firebase do Firebase:",:", product productIdId);
-                    //);
-                    // Remover Remover também do também do localStorage localStorage
-                    remove
-                    removeFromLocalFromLocalStorage(productStorage(productIdId);
-                    return);
-                    return true true;
-               ;
+        // Função para adicionar um novo produto no Firebase
+        function addProductToFirebase(product) {
+            // Gerar um ID único usando o timestamp
+            const newId = Date.now().toString();
+            product.id = newId;
+            
+            return database.ref('products/' + newId).set(product)
+                .then(() => {
+                    console.log("Produto adicionado ao Firebase:", newId);
+                    // Adicionar também no localStorage
+                    addToLocalStorage(product);
+                    return newId;
                 })
-                . })
-                .catch((catch((error)error) => => {
-                    console {
-                    console.error(".error("Erro ao exclErro ao excluir produtouir produto do Firebase do Firebase:", error:", error);
-                   );
-                    // Se // Se falhar, rem falhar, remover doover do localStorage e localStorage e mar marcar como pendente
-                    removeFromLocalcar como pendStorage(productente
-                    removeFromLocalIdStorage(productId);
-                    pending);
-                    pendingChanges.push({ type: 'Changes.pushdelete',({ type: 'delete', data: data: { id: product { id: productId }Id } });
- });
-                                       return false return false;
-               ;
+                .catch((error) => {
+                    console.error("Erro ao adicionar produto no Firebase:", error);
+                    // Se falhar, salvar no localStorage e marcar como pendente
+                    addToLocalStorage(product);
+                    pendingChanges.push({type: 'add', data: product});
+                    return newId;
                 });
-        });
         }
 
+        // Função para excluir um produto do Firebase
+        function deleteProductFromFirebase(productId) {
+            return database.ref('products/' + productId).remove()
+                .then(() => {
+                    console.log("Produto excluído do Firebase:", productId);
+                    // Remover também do localStorage
+                    removeFromLocalStorage(productId);
+                    return true;
+                })
+                .catch((error) => {
+                    console.error("Erro ao excluir produto do Firebase:", error);
+                    // Se falhar, remover do localStorage e marcar como pendente
+                    removeFromLocalStorage(productId);
+                    pendingChanges.push({type: 'delete', data: {id: productId}});
+                    return false;
+                });
         }
 
-        // Fun // Função para processarção para processar mudanças pendentes mudanças pendentes
-       
-        function process function processPendingChangesPendingChanges()() {
-            if {
-            if (pending (pendingChanges.lengthChanges.length ===  === 0 ||0 || !is !isOnline)Online) return return;
-
-            console;
-
-            console.log(".log("Processando", pendingProcessandoChanges.length", pendingChanges.length, ", "mudmudanças pendanças pendentes");
-
-            //entes Processar");
-
-            // Processar cada mud cada mudança pendança pendenteente
-            const newPending
-            constChanges = newPendingChanges = [];
-
-            [];
-
-            pendingChanges pendingChanges.forEach(.forEach(change =>change => {
- {
-                let success                let success = false = false;
-
-               ;
-
-                switch ( switch (change.typechange.type)) {
-                    case {
-                    case 'full 'fullUpdate':
-                        success = saveUpdate':
-                        success = saveProductsToFirebaseProductsToFirebase(change.data(change.data);
-                        break);
+        // Função para processar mudanças pendentes
+        function processPendingChanges() {
+            if (pendingChanges.length === 0 || !isOnline) return;
+            
+            console.log("Processando", pendingChanges.length, "mudanças pendentes");
+            
+            // Processar cada mudança pendente
+            const newPendingChanges = [];
+            
+            pendingChanges.forEach(change => {
+                let success = false;
+                
+                switch(change.type) {
+                    case 'fullUpdate':
+                        success = saveProductsToFirebase(change.data);
                         break;
-                   ;
-                    case 'update case 'update':
-                        success':
-                        success = update = updateProductInProductInFirebaseFirebase(change(change.data.data);
-                        break);
+                    case 'update':
+                        success = updateProductInFirebase(change.data);
                         break;
-                   ;
-                    case ' case 'addadd':
-                        success = add':
-                        success = addProductToProductToFirebase(changeFirebase(change.data).data) !== null;
- !== null;
+                    case 'add':
+                        success = addProductToFirebase(change.data) !== null;
                         break;
-                                           break;
                     case 'delete':
                         success = deleteProductFromFirebase(change.data.id);
                         break;
- case 'delete':
-                        success = deleteProductFromFirebase(change.data.id);
-                        break;
                 }
-
-                if (!                }
-
+                
                 if (!success) {
                     newPendingChanges.push(change);
                 }
             });
-
-            pendingChangessuccess) {
-                    newPendingChanges.push(change);
-                }
-            });
-
-            pendingChanges = new = newPendingChangesPendingChanges;
-       ;
+            
+            pendingChanges = newPendingChanges;
         }
 
-        // Fun }
-
-        // Funções parações para localStorage ( localStorage (como fallcomo fallbackback)
-        function)
-        function saveToLocalStorage saveToLocalStorage(products(products)) {
-            localStorage {
-            localStorage.setItem.setItem('f('frozenProductsrozenProductsWithHistoryWithHistory', JSON', JSON.stringify(.stringify(productsproducts));
-       ));
+        // Funções para localStorage (como fallback)
+        function saveToLocalStorage(products) {
+            localStorage.setItem('frozenProductsWithHistory', JSON.stringify(products));
         }
 
-        function loadFromLocalStorage }
-
-        function loadFromLocalStorage()() {
-            const {
-            const storedProducts storedProducts = localStorage = localStorage.getItem('.getItem('frozenfrozenProductsWithProductsWithHistory');
-            ifHistory');
-            if (st (storedProductsoredProducts)) {
-                products {
-                products = JSON = JSON.parse(st.parse(storedProductsoredProducts);
-           );
-            }
-        }
-        }
-
-        }
-
-        function updateInLocal function updateInLocalStorage(productStorage(product)) {
-            const {
-            const index = index = products.findIndex(p products.findIndex(p => p => p.id ===.id === product.id product.id);
-           );
-            if (index !== if (index !== -1 -1)) {
-                products {
-                products[index][index] = product;
-                = product;
-                saveTo saveToLocalStorageLocalStorage(products(products);
-            }
-       );
+        function loadFromLocalStorage() {
+            const storedProducts = localStorage.getItem('frozenProductsWithHistory');
+            if (storedProducts) {
+                products = JSON.parse(storedProducts);
             }
         }
 
-        }
-
-        function add function addToLocalToLocalStorage(productStorage(product)) {
-            products {
-            products.push(product.push(product);
-           );
-            saveTo saveToLocalStorageLocalStorage(products);
-       (products);
-        }
-
-        }
-
-        function removeFromLocal function removeFromLocalStorage(productStorage(productId)Id) {
-            {
-            const const index = products index = products.findIndex(p =>.findIndex(p => p.id p.id === product === productIdId);
-            if (index);
-            if !== - (index !== -1)1) {
-                {
-                products.splice products.s(indexplice(index, , 11);
-                save);
-                saveToLocalToLocalStorage(productsStorage(products);
-           );
+        function updateInLocalStorage(product) {
+            const index = products.findIndex(p => p.id === product.id);
+            if (index !== -1) {
+                products[index] = product;
+                saveToLocalStorage(products);
             }
         }
+
+        function addToLocalStorage(product) {
+            products.push(product);
+            saveToLocalStorage(products);
         }
 
-        // }
-
-        // Função Função para render para renderizar os produtos naizar os produtos na tabela tabela
-       
-        function render function renderProducts(Products(productsToRender = products)productsToRender = products) {
-            {
-            const table const tableBody =Body = document.querySelector document.querySelector('#productsTableBody('#productsTableBody');
-
-           ');
-
-            if ( if (productsToproductsToRender.lengthRender.length ===  === 0)0) {
-                {
-                tableBody tableBody.innerHTML =.innerHTML = '<tr '<tr><td><td colspan=" colspan="5" class="5" class="loading">loading">NenhNenhum produtoum produto encontrado encontrado</td</td></tr></tr>';
-               >';
-                return return;
-           ;
+        function removeFromLocalStorage(productId) {
+            const index = products.findIndex(p => p.id === productId);
+            if (index !== -1) {
+                products.splice(index, 1);
+                saveToLocalStorage(products);
             }
+        }
 
-            table }
-
-            tableBody.innerHTMLBody.innerHTML = ' = '';
-
-           ';
-
-            productsTo productsToRender.forEachRender.forEach(product =>(product => {
-                {
-                const row const row = document = document.createElement('.createElement('trtr');
-
-                row');
-
-                row.innerHTML =.innerHTML = `
-                    <td `
-                    <td>${>${product.sproduct.supplierupplier}</td}</td>
-                   >
-                    <td>${ <td>${product.nameproduct.name}</td}</td>
-                   >
-                    <td <td>${>${product.product.organization}</tdorganization}</td>
-                   >
-                    <td> <td>${product${product.current.currentQuantity}</td>
-                   Quantity}</td>
-                    < <td>
-                       td>
-                        <div <div class=" class="quantity-controlquantity-controls">
-                           s">
-                            <button class <button class="quantity="quantity-btn decrease-btn decrease" onclick" onclick="de="decreaseQuantity('${creaseQuantity('${product.idproduct.id}')}')">-">-</button</button>
-                           >
-                            <input <input type="number" class=" type="number" class="quantity-inputquantity-input" id" id="input="input-${product.id-${product.id}" value}" value="${product="${product.currentQuantity.currentQuantity}" min}" min="0="0">
-                           ">
-                            <button <button class=" class="quantity-btnquantity-btn increase" increase" onclick=" onclick="increaseQuantity('${increaseQuantity('${product.idproduct.id}')">+}')</button">+</button>
-                           >
-                            <button <button class="btn set class="btn set-quantity-btn-quant" onclickity-btn" onclick="set="setQuantity('${product.id}Quantity('')">${product.id}')">DefinDefinir</ir</buttonbutton>
-                           >
-                            <button class <button class="btn="btn history-btn history-btn" onclick" onclick="show="showHistory('History('${product${product.id}.id}')">')">HistóHistórico</rico</button>
-                           button>
-                            <button class <button class="btn="btn edit-btn edit-btn" onclick" onclick="openEditModal="openEditModal('${('${product.idproduct.id}')}')">Ed">Editar</itar</buttonbutton>
-                            <button class>
-                            <button class="btn="btn delete-btn delete-btn" onclick" onclick="confirm="confirmDelete('${productDelete('${product.id}.id}')">')">Excluir</button>
-                        </divExcluir</button>
+        // Função para renderizar os produtos na tabela
+        function renderProducts(productsToRender = products) {
+            const tableBody = document.querySelector('#productsTableBody');
+            
+            if (productsToRender.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="loading">Nenhum produto encontrado</td></tr>';
+                return;
+            }
+            
+            tableBody.innerHTML = '';
+            
+            productsToRender.forEach(product => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${product.supplier}</td>
+                    <td>${product.name}</td>
+                    <td>${product.organization}</td>
+                    <td>${product.currentQuantity}</td>
+                    <td>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn decrease" onclick="decreaseQuantity('${product.id}')">-</button>
+                            <input type="number" class="quantity-input" id="input-${product.id}" value="${product.currentQuantity}" min="0">
+                            <button class="quantity-btn increase" onclick="increaseQuantity('${product.id}')">+</button>
+                            <button class="btn set-quantity-btn" onclick="setQuantity('${product.id}')">Definir</button>
+                            <button class="btn history-btn" onclick="showHistory('${product.id}')">Histórico</button>
+                            <button class="btn edit-btn" onclick="openEditModal('${product.id}')">Editar</button>
+                            <button class="btn delete-btn" onclick="confirmDelete('${product.id}')">Excluir</button>
                         </div>
-                    </>
-                    </tdtd>
-                `>
+                    </td>
                 `;
-
-               ;
-
-                tableBody.appendChild(row tableBody.appendChild(row);
-           );
+                
+                tableBody.appendChild(row);
             });
-        });
         }
 
-        }
-
-        // Função para // Função para filtrar filtrar produtos produtos
-        function
-        function filterProducts filterProducts()() {
-            const {
-            const search searchTermTerm = document = document.getElementById('.getElementById('searchInput').valuesearchInput').value.toLowerCase.toLowerCase();
-            const();
-            const filteredProducts filteredProducts = products = products.filter(product.filter(product =>
-                =>
-                product.s product.supplierupplier.toLowerCase()..toLowerCase().includes(searchincludes(searchTerm)Term) ||
-                ||
-                product.name product.name.toLowerCase().includes(search.toLowerCase().includes(searchTermTerm)
-           )
+        // Função para filtrar produtos
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.supplier.toLowerCase().includes(searchTerm) || 
+                product.name.toLowerCase().includes(searchTerm)
             );
-            renderProducts(filter );
-            renderProducts(filteredProductsedProducts);
-       );
+            renderProducts(filteredProducts);
         }
 
-        }
-
-        // Função para // Função para diminuir diminuir quantidade quantidade
-        function
-        function decreaseQuantity decreaseQuantity(id) {
-           (id) const product {
-            const product = products = products.find(p.find(p => p => p.id ===.id === id id);
-            if);
-            if (product (product && product && product.current.currentQuantityQuantity > 0) > 0) {
-                {
-                product.current product.currentQuantityQuantity--;
-                update--;
-                updateProductHistoryProductHistory(product,(product, 'dim 'diminuiçãoinuição');
-
-                if (');
-
-                if (isOnlineisOnline)) {
-                    updateProductIn {
-                    updateProductInFirebaseFirebase(product(product);
-                });
-                } else else {
-                    updateInLocal {
-                    updateInLocalStorage(productStorage(product);
-                   );
-                    pendingChanges pendingChanges.push({.push({ type: type: 'update 'update', data', data: product: product });
-                });
+        // Função para diminuir quantidade
+        function decreaseQuantity(id) {
+            const product = products.find(p => p.id === id);
+            if (product && product.currentQuantity > 0) {
+                product.currentQuantity--;
+                updateProductHistory(product, 'diminuição');
+                
+                if (isOnline) {
+                    updateProductInFirebase(product);
+                } else {
+                    updateInLocalStorage(product);
+                    pendingChanges.push({type: 'update', data: product});
                 }
-
-                }
-
-                renderProducts renderProducts();
-           ();
-            }
-        }
-        }
-
-        }
-
-        // Fun // Função paração para aumentar quantidade aumentar quantidade
-
-               function increase function increaseQuantity(idQuantity(id)) {
-            const {
-            const product = product = products products.find.find(p => p.id === id);
-            if (product) {
-                product.currentQuantity++;
-                update(p => p.id === id);
-            if (product) {
-                product.currentQuantity++;
-                updateProductHistoryProductHistory(product,(product, 'a 'aumento');
-
-               umento');
-
-                if ( if (isOnlineisOnline)) {
-                    update {
-                    updateProductInFirebaseProductInFirebase(product(product);
-                });
-                } else else {
-                    update {
-                    updateInLocalInLocalStorage(productStorage(product);
-                   );
-                    pendingChanges pendingChanges.push({.push({ type: type: 'update 'update', data', data: product });
-               : product }
-
-                });
-                renderProducts }
-
+                
                 renderProducts();
-           ();
             }
         }
+
+        // Função para aumentar quantidade
+        function increaseQuantity(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                product.currentQuantity++;
+                updateProductHistory(product, 'aumento');
+                
+                if (isOnline) {
+                    updateProductInFirebase(product);
+                } else {
+                    updateInLocalStorage(product);
+                    pendingChanges.push({type: 'update', data: product});
+                }
+                
+                renderProducts();
+            }
         }
 
-        }
-
-        // Fun // Função paração para definir quantidade definir quantidade específica específica
-       
-        function set function setQuantity(idQuantity(id)) {
-            const {
-            const product = products.find product =(p => products.find(p => p.id p.id === id === id);
-           );
-            const input const input = document.getElementById(` = document.getElementById(`input-input-${id${id}`);
-           }`);
-            const newQuantity const new =Quantity = parseInt(input.value parseInt(input.value);
-
-            if);
-
-            if (product (product && ! && !isNaN(newQuantityisNaN(newQuantity) &&) && newQuantity newQuantity >=  >= 0)0) {
-                const old {
-                const oldQuantity =Quantity = product.current product.currentQuantityQuantity;
-                product;
-                product.currentQuantity = new.currentQuantity = newQuantityQuantity;
-
-                if;
-
-                if (old (oldQuantity !==Quantity !== newQuantity) newQuantity) {
-                    const {
-                    const action = action = newQuantity newQuantity > oldQuantity ? > oldQuantity ? 'a 'aumentoumento' : 'diminuição' : 'diminuição';
-                   ';
-                    updateProduct updateProductHistory(productHistory(product, action);
-
-                   , action);
-
-                    if ( if (isOnlineisOnline)) {
-                        update {
-                        updateProductInFirebaseProductInFirebase(product);
-                    } else {
-                        updateInLocal(product);
+        // Função para definir quantidade específica
+        function setQuantity(id) {
+            const product = products.find(p => p.id === id);
+            const input = document.getElementById(`input-${id}`);
+            const newQuantity = parseInt(input.value);
+            
+            if (product && !isNaN(newQuantity) && newQuantity >= 0) {
+                const oldQuantity = product.currentQuantity;
+                product.currentQuantity = newQuantity;
+                
+                if (oldQuantity !== newQuantity) {
+                    const action = newQuantity > oldQuantity ? 'aumento' : 'diminuição';
+                    updateProductHistory(product, action);
+                    
+                    if (isOnline) {
+                        updateProductInFirebase(product);
                     } else {
                         updateInLocalStorage(product);
-                        pendingChangesStorage(product);
-                        pendingChanges.push({.push({ type: type: 'update', data 'update', data: product: product });
+                        pendingChanges.push({type: 'update', data: product});
                     }
-
-                    });
-                    }
-
-                    renderProducts renderProducts();
-               ();
-                }
-            }
-            }
-        }
-        }
-
-        }
-
-        // Fun // Função paração para atualizar atualizar o histórico o histórico do produto do produto
-       
-        function update function updateProductHistoryProductHistory(product,(product, action) action) {
-            {
-            const today = new const today Date = new Date();
-            const();
-            const dateStr dateStr = today = today.toISO.toISOString().split('TString().split('')[0];
-            constT')[0];
-            const timeStr timeStr = today = today.toTime.toTimeString().String().split(' ')[0split('];
-
-            if (!product ')[0];
-
-            if (!product.history.history)) {
-                product.history = [];
- {
-                product            }
-
-            product.history = [];
-            }
-
-            product.history.history.push.push({
-                date({
-                date: `${: `${dateStrdateStr} ${} ${timeStrtimeStr}`}`,
-                quantity,
-                quantity: product: product.currentQuantity.currentQuantity,
-               ,
-                action: action: action action
-           
-            });
-        });
-        }
-
-        // }
-
-        // Função Função para mostrar para mostrar histórico histórico
-        function
-        function showHistory showHistory(id)(id) {
- {
-            const product            const product = products = products.find(p.find(p => p => p.id ===.id === id id);
-            if);
-            if (product (product)) {
-                const {
-                const historyContent historyContent = document = document.getElementById('.getElementById('historyContenthistoryContent');
-
-               ');
-
-                let history let historyHTML =HTML = `
-                    `
-                    <h <h3>3>${product${product.name}.name} - - ${product.s ${product.supplierupplier}</h}</h33>
-                   >
-                    <p> <p>QuantidadeQuantidade atual: atual: <strong <strong>${>${product.currentQuantity}</product.currentQuantity}</strong></strong></pp>
-                `>
-                `;
-
-               ;
-
-                if (product.h if (istory &&product.history && product.h product.history.lengthistory.length >  > 0) {
-                   0) historyHTML {
-                    historyHTML += += `
-                        `
-                        <table class <table class="history-table="history">
-                           -table">
-                            <thead <thead>
-                                <tr>
-                                <tr>
-                                   >
-                                    <th> <th>Data/Hora</Data/Hora</thth>
-                                   >
-                                    <th> <th>QuantidadeQuantidade</th</th>
-                                   >
-                                    <th <th>Ação>Ação</th</th>
-                               >
-                                </tr>
-                            </tr>
-                            </thead </thead>
-                           >
-                            <tbody>
-                                <tbody>
-                                ${product ${product.history.history.map(.map(entry =>entry => `
-                                    <tr `
-                                    <tr>
-                                       >
-                                        <td <td>${>${entry.dateentry.date}</td}</td>
-                                        <td>
-                                        <td>${>${entry.entry.quantity}</quantity}</tdtd>
-                                       >
-                                        <td> <td>${entry${entry.action ||.action || 'registro inicial 'registro inicial'}</'}</tdtd>
-                                    </>
-                                    </trtr>
-                                `>
-                                `).join).join('')('')}
-                           }
-                            </tbody </tbody>
-                       >
-                        </table </table>
-                   >
-                    ` `;
-                } else;
-                } else {
-                    history {
-                    historyHTML +=HTML += '<p '<p>Nenhum>Nenhum histórico dispon histórico disponível paraível para este produto este produto.</p.</p>';
-                }
-
-               >';
-                }
-
-                historyContent historyContent.innerHTML =.innerHTML = historyHTML;
-                historyHTML;
-                document.getElementById('history document.getElementById('historyModal').Modal').style.displaystyle.display = ' = 'flexflex';
-            }
-       ';
-            }
-        }
-
-        // }
-
-        // Função Função para fe para fechar modalchar modal de histórico
-        de histórico
-        function close function closeHistoryModalHistoryModal()() {
-            document {
-            document.getElementById('historyModal.getElementById('historyModal').style').style.display =.display = 'none 'none';
-       ';
-        }
-
-        // Fun }
-
-        // Função paração para confirmar confirmar exclusão exclusão de produto de produto
-        function confirm
-        function confirmDelete(idDelete(id)) {
-            const {
-            const product = product = products.find products.find(p => p.id(p => p.id === id === id);
-           );
-            if ( if (product)product) {
-                productTo {
-                productToDelete =Delete = id id;
-                document;
-                document.getElementById('.getElementById('deleteMessagedeleteMessage').textContent').text =
-                    `Content =
-                    `Tem certezaTem certeza que dese que deseja exclja excluir o produto "${uir o produto "${product.name}" doproduct.name}" do forneced fornecedor "${or "${product.sproduct.supplierupplier}"?`;
-               }"?`;
-                document.getElementById document.getElementById('delete('deleteModal').Modal').style.displaystyle.display = ' = 'flex';
-           flex';
-            }
-        }
-        }
-
-        // }
-
-        // Função Função para execut para executar a exclusãoar a exclusão do produto do produto
-       
-        function delete function deleteProduct()Product() {
-            {
-            if (productTo if (productToDelete)Delete) {
-                {
-                if ( if (isOnlineisOnline)) {
-                    deleteProductFrom {
-                    deleteFirebaseProductFromFirebase(productTo(productToDelete).Delete).then(()then(() => {
-                        => // Remover {
-                        // Remover da lista da lista local local
-                        const
-                        const index = index = products products.findIndex(p.findIndex(p => p => p.id ===.id === productTo productToDeleteDelete);
-                        if);
-                        if (index (index !== - !== -1)1) {
-                            {
-                            products.s products.splice(indexplice(index, , 11);
-                       );
-                        }
-                        render }
-                        renderProductsProducts();
-                        close();
-                        closeDeleteModalDeleteModal();
-                   ();
-                    });
-                });
-                } else } else {
-                    {
-                    // Mod // Modo offline - remo offlineover local - remover localmente emente e adicion adicionar àar à lista de lista de pendências
-                    pendências
-                    removeFrom removeFromLocalStorageLocalStorage(productTo(productToDeleteDelete);
-                    pending);
-                    pendingChanges.pushChanges.push({ type({ type: ': 'delete',delete', data: data: { id { id: product: productToDeleteToDelete } });
-
- } });
-
-                    //                    // Remover Remover da lista da lista local
-                    const local index =
-                    const products.find index =Index(p products.findIndex(p => p => p.id === productTo.id ===Delete productTo);
-                    ifDelete (index);
-                    if !== - (index !== -1)1) {
-                        products.s {
-                       plice(index products.s, plice(index1, );
-                   1);
-                    }
-                    render }
+                    
                     renderProducts();
-                    closeProductsDeleteModal();
-                    close();
-               DeleteModal();
                 }
             }
+        }
+
+        // Função para atualizar o histórico do produto
+        function updateProductHistory(product, action) {
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0];
+            const timeStr = today.toTimeString().split(' ')[0];
+            
+            if (!product.history) {
+                product.history = [];
+            }
+            
+            product.history.push({
+                date: `${dateStr} ${timeStr}`,
+                quantity: product.currentQuantity,
+                action: action
+            });
+        }
+
+        // Função para mostrar histórico
+        function showHistory(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                const historyContent = document.getElementById('historyContent');
+                
+                let historyHTML = `
+                    <h3>${product.name} - ${product.supplier}</h3>
+                    <p>Quantidade atual: <strong>${product.currentQuantity}</strong></p>
+                `;
+                
+                if (product.history && product.history.length > 0) {
+                    historyHTML += `
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Quantidade</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${product.history.map(entry => `
+                                    <tr>
+                                        <td>${entry.date}</td>
+                                        <td>${entry.quantity}</td>
+                                        <td>${entry.action || 'registro inicial'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    historyHTML += '<p>Nenhum histórico disponível para este produto.</p>';
+                }
+                
+                historyContent.innerHTML = historyHTML;
+                document.getElementById('historyModal').style.display = 'flex';
             }
         }
+
+        // Função para fechar modal de histórico
+        function closeHistoryModal() {
+            document.getElementById('historyModal').style.display = 'none';
         }
 
-        // Fun }
-
-       ção para // Função para fechar modal de fechar modal de exclusão exclusão
-        function closeDeleteModal() {
-            document
-        function closeDeleteModal() {
-            document.getElementById('.getElementById('deleteModaldeleteModal').style').style.display =.display = 'none';
-            'none';
-            productToDelete = productToDelete = null null;
-       ;
-        }
-
-        // }
-
-        // Fun Funçãoção para ab para abrir modalrir modal de ad de adicionar produto
-        functionicionar produto
-        function openAdd openAddModal() {
-            document.getElementById('productModal() {
-            document.getElementByIdId').('productvalue =Id').value = '';
-            '';
-            document.getElementById document.getElementById('supp('supplier').lier').valuevalue = '';
-            document.getElementById('productName'). = '';
-            document.getElementById('productName').value =value = '';
-            '';
-            document.getElementById document.getElementById('organization('organization').value').value = = '';
-            '';
-            document.getElementById('quantity').value = '';
-            document.getElementById('quantity'). document.getElementByIdvalue = '';
-            document.getElementById('modal('modalTitle').Title').textContenttextContent = 'Adicion = 'ar ProdAdicionar Produtouto';
-            document';
-            document.getElementById('productModal.getElementById('').styleproductModal').style.display =.display = 'flex 'flex';
-       ';
-        }
-
-        }
-
-        // Função para // Fun abrirção para abrir modal de modal de edição edição de produto de produto
-        function open
-       EditModal function openEditModal(id)(id) {
-            {
-            const product const product = products.find(p = products => p.find(p => p.id ===.id === id id);
-            if);
-            if (product) (product {
-)                document.getElementById(' {
-                document.getElementByIdproductId('productId').value = product').value.id = product;
-                document.id;
-                document.getElementById('.getElementById('supplier').valuesupplier').value = product = product.supp.supplierlier;
-                document;
-                document.getElementById('productName.getElementById('productName').').valuevalue = product = product.name.name;
-                document;
-                document.getElementById('.getElementById('organization').organization').value = product.value =organization product.organization;
-                document;
-                document.getElementById('.getElementById('quantity').quantity').value = product.currentvalue = product.currentQuantityQuantity;
-                document;
-                document.getElementById('.getElementById('modalTitle').textmodalTitle').textContent =Content = 'Ed 'Editar Proditar Produtouto';
-                document';
-                document.getElementById('.getElementById('productModalproductModal').style').style.display = 'flex.display = 'flex';
-           ';
+        // Função para confirmar exclusão de produto
+        function confirmDelete(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                productToDelete = id;
+                document.getElementById('deleteMessage').textContent = `Tem certeza que deseja excluir o produto "${product.name}" do fornecedor "${product.supplier}"?`;
+                document.getElementById('deleteModal').style.display = 'flex';
             }
         }
-        }
 
-        }
-
-        // Fun // Função paração para fechar fechar modal modal
-        function
-        function closeModal closeModal()() {
-            document {
-            document.getElementById('.getElementById('productModalproductModal').style.display =').style.display = ' 'nonenone';
-       ';
-        }
-
-        // Fun }
-
-        // Função para processarção para processar o formul o formulário deário de produto produto
-        document
-        document.getElementById('.getElementById('productFormproductForm').add').addEventListener('EventListener('submit',submit', function(e function(e)) {
-            e {
-            e.preventDefault.preventDefault();
-
-            const();
-
-            const productId productId = document = document.getElementById('productId.getElementById('productId').value').value;
-           ;
-            const supplier const supplier = document = document.getElementById('.getElementById('suppliersupplier').value').value;
-            const;
-            const product productName =Name = document.getElementById document.getElementById('('productproductName').Name').valuevalue;
-            const;
-            const organization = organization = document.getElementById document.getElementById('organization').value;
-           ('organization').value;
-            const quantity const quantity = parseInt = parseInt(document.getElementById(document.getElementById('quantity('quantity').value);
-
-           ').value);
-
-            if ( if (productIdproductId)) {
-                // Editar {
-                // Editar produto exist produto existenteente
-                const
-                const product = product = products.find(p products.find(p => p.id => p.id === product === productIdId);
-                if);
-                if (product) (product) {
-                    // {
-                    // Verificar Verificar se hou se houve mudve mudanças nosanças nos dados
-                    const dados
-                    const changes = changes = [];
-                    [];
-                    if ( if (product.sproduct.supplier !== supplierupplier !== supplier) changes) changes.push.push(
-                        `(
-                        `ForneFornecedorcedor: ${product.s: ${product.supplierupplier} → ${supp} → ${supplierlier}`);
-                    if}`);
-                    if (product (product.name !== productName.name !== productName) changes) changes.push(`.push(`Nome:Nome: ${product ${product.name}.name} → ${ → ${productNameproductName}`);
-                    if (}`);
-                    if (product.product.organization !==organization !== organization) changes.push organization) changes.push(
-                       (
-                        `Organ `Organização:ização: ${product.organization ${product.organization} →} → ${organization ${organization}`);
-                   }`);
-                    if ( if (product.currentQuantity !==product.currentQuantity !== quantity) quantity) changes.push changes.push(
-                       (
-                        `Quant `Quantidade:idade: ${product.currentQuantity} → ${quantity ${product.currentQuantity} → ${quantity}`}`);
-
-                    //);
-
-                    // Aplic Aplicar as mudançasar as mudanças
-                   
-                    product.s product.supplierupplier = supplier = supplier;
-                    product.name;
-                    product.name = product = productNameName;
-                    product;
-                    product.organization.organization = organization;
-                    = organization;
-                    product.current product.currentQuantity =Quantity = quantity quantity;
-
-                    //;
-
-                    // Registrar no histórico se Registrar no histórico se h houverouver mudanças mudanças
-                   
-                    if (changes.length > 0) {
- if (changes.length > 0) {
-                                               updateProduct updateProductHistory(productHistory(product, `, `ediçãoedição: ${: ${changes.joinchanges.join(', ')}(', ')}`);
-                   `);
-                    }
-
-                    if (is }
-
-                    ifOnline) (isOnline) {
- {
-                                               updateProduct updateProductInFireInFirebase(product);
-                   base(product);
-                    } else } else {
-                        {
-                        updateIn updateInLocalStorageLocalStorage(product);
-                        pending(product);
-                        pendingChanges.pushChanges.push({ type({ type: ': 'update',update', data: data: product product });
-                    });
-                    }
-                }
-                }
-            } }
-            } else else {
-                // {
-                // Adicionar novo Adicionar novo produto produto
-                const
-                const today = today = new Date new Date();
-                const date();
-                const dateStr =Str = today.to today.toISOStringISOString().split().split('T('T')[0')[0];
-               ];
-                const time const timeStr =Str = today.to today.toTimeStringTimeString().split().split(' '(' ')[0)[0];
-
-               ];
-
-                const new const newProduct =Product = {
-                    {
-                    supplier: supplier: supplier supplier,
-                    name: product,
-                    name: productNameName,
-                    organization,
-                    organization: organization: organization,
-                    currentQuantity,
-                    currentQuantity: quantity: quantity,
-                   ,
-                    history: history: [ [{
-                        date:{
-                        date: `${ `${dateStrdateStr} ${} ${timeStrtimeStr}`,
-                        quantity}`: quantity,
-                        quantity: quantity,
-                       ,
-                        action: action: 'registro inicial 'registro inicial'
-                   '
-                    }]
-                } };
-
-                if]
-                (is };
-
-                ifOnline) (is {
-                   Online) {
-                    addProduct addProductToFireToFirebase(newbase(newProduct).Product).then(idthen(id => => {
-                        new {
-                        newProduct.idProduct.id = = id id;
-                       ;
-                        products.push products.push(newProduct(newProduct);
-                       );
-                        renderProducts renderProducts();
-                    });
-               ();
+        // Função para executar a exclusão do produto
+        function deleteProduct() {
+            if (productToDelete) {
+                if (isOnline) {
+                    deleteProductFromFirebase(productToDelete).then(() => {
+                        // Remover da lista local
+                        const index = products.findIndex(p => p.id === productToDelete);
+                        if (index !== -1) {
+                            products.splice(index, 1);
+                        }
+                        renderProducts();
+                        closeDeleteModal();
                     });
                 } else {
-                    // Ger } elsear ID {
-                    // Gerar ID temporário temporário para uso para uso offline offline
-                    newProduct.id
-                    new = 'Product.id = 'temp_'temp_' + Date.now + Date();
-                    add.nowToLocal();
-                    addToLocalStorage(newStorage(newProductProduct);
-                    pending);
-                    pendingChanges.push({ typeChanges.push: '({ typeadd',: 'add', data: data: newProduct newProduct });
-                    });
-                    products.push(newProduct products.push);
-                   (newProduct);
-                    renderProducts renderProducts();
-               ();
+                    // Modo offline - remover localmente e adicionar à lista de pendências
+                    removeFromLocalStorage(productToDelete);
+                    pendingChanges.push({type: 'delete', data: {id: productToDelete}});
+                    
+                    // Remover da lista local
+                    const index = products.findIndex(p => p.id === productToDelete);
+                    if (index !== -1) {
+                        products.splice(index, 1);
+                    }
+                    renderProducts();
+                    closeDeleteModal();
                 }
             }
-            }
-
-            }
-
-            closeModal closeModal();
-        });
-
-       ();
-        });
-
-        // Fun // Função paração para exportar exportar para Excel para Excel
-       
-        function function exportToExcel exportToExcel()() {
-            // {
-            // Criar Criar uma nova uma nova planilha planilha
-            const
-            const ws = ws = XLS XLSX.utilsX.utils.json_to.json_to_sheet_sheet(products(products.map(p.map(p => => ({
-                For ({
-                Fornecednecedor:or: p.s p.supplierupplier,
-               ,
-                Produto Produto: p: p.name,
-                Organ.name,
-                Organização:ização: p. p.organizationorganization,
-                Quant,
-                Quantidade:idade: p.current p.currentQuantityQuantity
-            }
-            })))));
-
-            //);
-
-            // Criar Criar um novo um novo workbook workbook
-            const
-            const wb wb = X = XLSXLSX.utils.book.utils.book_new_new();
-            X();
-            XLSXLSX.utils.book.utils.book_append_append_sheet_sheet(wb(wb, ws, ws, ", "ProdutosProdutos Congelados Congelados");
-
-            // Salvar");
-
-            // Salvar o arqu o arquivoivo
-            X
-            XLSXLSX.writeFile.writeFile(wb(wb, ", "controlecontrole_c_congongeladoselados.xlsx.xlsx");
         }
 
-       ");
-        // Fun }
+        // Função para fechar modal de exclusão
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            productToDelete = null;
+        }
 
-        // Função para processarção para processar o arqu o arquivo Excelivo Excel
-       
-        document.getElementById document.getElementById('fileUpload').('fileaddEventListenerUpload').addEventListener('change('change', function', function(e)(e) {
-            {
-            const file const file = e = e.target.f.target.filesiles[0];
-            if[0 (!file];
-            if) return (!file) return;
+        // Função para abrir modal de adicionar produto
+        function openAddModal() {
+            document.getElementById('productId').value = '';
+            document.getElementById('supplier').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('organization').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('modalTitle').textContent = 'Adicionar Produto';
+            document.getElementById('productModal').style.display = 'flex';
+        }
 
-           ;
+        // Função para abrir modal de edição de produto
+        function openEditModal(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                document.getElementById('productId').value = product.id;
+                document.getElementById('supplier').value = product.supplier;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('organization').value = product.organization;
+                document.getElementById('quantity').value = product.currentQuantity;
+                document.getElementById('modalTitle').textContent = 'Editar Produto';
+                document.getElementById('productModal').style.display = 'flex';
+            }
+        }
 
-            const reader const reader = new = new FileReader FileReader();
-           ();
-            reader.on reader.onload =load = function(e function(e)) {
-                const {
-                const data = data = new U new Uint8int8Array(eArray(e.target.result.target.result);
-               );
-                const workbook const workbook = X = XLSXLSX.read(data.read(data, {, { type: type: 'array 'array'' });
+        // Função para fechar modal
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
 
-                // });
-
-                // Processar Processar a primeira a primeira planil planilhaha
-                const
-                const worksheet = worksheet = workbook.S workbook.Sheetsheets[workbook[workbook.Sheet.SheetNamesNames[0[0]];
-                const]];
-                const jsonData jsonData = X = XLSXLSX.utils.s.utils.sheet_toheet_to_json(_json(worksheetworksheet, {, { header: header: 1 1 });
-
-                });
-
-                // Process // Processar osar os dados da dados da planil planilhaha
-                process
-                processExcelDataExcelData(jsonData(jsonData);
-           );
-            };
-            };
-            reader.read reader.readAsArrayAsArrayBuffer(fileBuffer(file);
-        });
-
-       );
-        });
-
-        // // Fun Função paração para processar processar dados do dados do Excel
-        function Excel
-        function processExcel processExcelData(dataData(data)) {
-            {
-            // Encontrar a // Encontrar a linha com linha com os cabe os cabeçalçalhos de datahos de data
-            let
-            let headerRow headerRowIndex =Index = -1 -1;
-            for (;
-            for (let ilet i =  = 0;0; i i < data.length; i < data.length; i++)++) {
-                if (data[i] {
-                && data[i]. if (data[i] && data[i].length >length > 0 && typeof 0 data[i][0 && typeof data[i][0] ===] === 'string 'string' && data[i' &&][0 data[i][0].includes].includes(
-                       (
-                        'FOR 'FORNECNECEDOREDOR'))')) {
-                    header {
-                    headerRowIndexRowIndex = i = i;
-                   ;
-                    break break;
-               ;
+        // Função para processar o formulário de produto
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const productId = document.getElementById('productId').value;
+            const supplier = document.getElementById('supplier').value;
+            const productName = document.getElementById('productName').value;
+            const organization = document.getElementById('organization').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            
+            if (productId) {
+                // Editar produto existente
+                const product = products.find(p => p.id === productId);
+                if (product) {
+                    // Verificar se houve mudanças nos dados
+                    const changes = [];
+                    if (product.supplier !== supplier) changes.push(`Fornecedor: ${product.supplier} → ${supplier}`);
+                    if (product.name !== productName) changes.push(`Nome: ${product.name} → ${productName}`);
+                    if (product.organization !== organization) changes.push(`Organização: ${product.organization} → ${organization}`);
+                    if (product.currentQuantity !== quantity) changes.push(`Quantidade: ${product.currentQuantity} → ${quantity}`);
+                    
+                    // Aplicar as mudanças
+                    product.supplier = supplier;
+                    product.name = productName;
+                    product.organization = organization;
+                    product.currentQuantity = quantity;
+                    
+                    // Registrar no histórico se houver mudanças
+                    if (changes.length > 0) {
+                        updateProductHistory(product, `edição: ${changes.join(', ')}`);
+                    }
+                    
+                    if (isOnline) {
+                        updateProductInFirebase(product);
+                    } else {
+                        updateInLocalStorage(product);
+                        pendingChanges.push({type: 'update', data: product});
+                    }
+                }
+            } else {
+                // Adicionar novo produto
+                const today = new Date();
+                const dateStr = today.toISOString().split('T')[0];
+                const timeStr = today.toTimeString().split(' ')[0];
+                
+                const newProduct = {
+                    supplier: supplier,
+                    name: productName,
+                    organization: organization,
+                    currentQuantity: quantity,
+                    history: [{
+                        date: `${dateStr} ${timeStr}`,
+                        quantity: quantity,
+                        action: 'registro inicial'
+                    }]
+                };
+                
+                if (isOnline) {
+                    addProductToFirebase(newProduct).then(id => {
+                        newProduct.id = id;
+                        products.push(newProduct);
+                        renderProducts();
+                    });
+                } else {
+                    // Gerar ID temporário para uso offline
+                    newProduct.id = 'temp_' + Date.now();
+                    addToLocalStorage(newProduct);
+                    pendingChanges.push({type: 'add', data: newProduct});
+                    products.push(newProduct);
+                    renderProducts();
                 }
             }
+            
+            closeModal();
+        });
+
+        // Função para exportar para Excel
+        function exportToExcel() {
+            // Criar uma nova planilha
+            const ws = XLSX.utils.json_to_sheet(products.map(p => ({
+                Fornecedor: p.supplier,
+                Produto: p.name,
+                Organização: p.organization,
+                Quantidade: p.currentQuantity
+            })));
+            
+            // Criar um novo workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Produtos Congelados");
+            
+            // Salvar o arquivo
+            XLSX.writeFile(wb, "controle_congelados.xlsx");
+        }
+
+        // Função para processar o arquivo Excel
+        document.getElementById('fileUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                
+                // Processar a primeira planilha
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                
+                // Processar os dados da planilha
+                processExcelData(jsonData);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        // Função para processar dados do Excel
+        function processExcelData(data) {
+            // Encontrar a linha com os cabeçalhos de data
+            let headerRowIndex = -1;
+            for (let i = 0; i < data.length; i++) {
+                if (data[i] && data[i].length > 0 && typeof data[i][0] === 'string' && data[i][0].includes('FORNECEDOR')) {
+                    headerRowIndex = i;
+                    break;
+                }
             }
-
-            if }
-
-            if (headerRowIndex (headerRowIndex === - === -1)1) {
-                {
-                alert(' alert('Não foiNão foi possível identificar possível identificar o formato o formato da plan da planilhailha.');
-               .');
+            
+            if (headerRowIndex === -1) {
+                alert('Não foi possível identificar o formato da planilha.');
                 return;
-            return;
             }
-
-            // }
-
-            // Extrair Extrair as datas as datas dos cabe dos cabeçalçalhoshos
-            const
-            const dates = dates = [];
-            [];
-            for ( for (let jlet j =  = 3;3; j j < < data data[headerRow[headerRowIndex].Index].length;length; j++) j++) {
-                {
-                if ( if (datadata[headerRow[headerRowIndexIndex][j]][j] && typeof && typeof data data[headerRow[headerRowIndexIndex][j]][j] === ' === 'string')string') {
-                    {
-                    // // Tent Tentar converterar converter a data a data
-                    const date
-                    const dateStr =Str = data[headerRow dataIndex[headerRowIndex][j][j];
-                    dates];
-                    dates.push(date.push(dateStr.split(' 'Str.split)[0(' ')[0]); //]); // Pegar Pegar apenas a apenas a parte da data parte da data
-               
+            
+            // Extrair as datas dos cabeçalhos
+            const dates = [];
+            for (let j = 3; j < data[headerRowIndex].length; j++) {
+                if (data[headerRowIndex][j] && typeof data[headerRowIndex][j] === 'string') {
+                    // Tentar converter a data
+                    const dateStr = data[headerRowIndex][j];
+                    dates.push(dateStr.split(' ')[0]); // Pegar apenas a parte da data
                 }
             }
-            }
-
-            // }
-
-            // Processar Processar os produtos os produtos
-            const new
-            const newProducts =Products = [];
-            [];
-            for ( for (let i = headerRowlet i = headerRowIndex + Index + 1; i < data.length; i++) {
-                if1; i < data.length; i++) {
-                if (! (!data[i]data[i] || data || data[i].[i].lengthlength < 4) continue < 4) continue;
-
-               ;
-
-                const const supplier = data supplier = data[i][[i][11];
-                const];
-                const productName productName = data = data[i[i][2];
-                const][2];
-                const organization = organization = data[i data[i][3][3];
-
-               ];
-
-                if (!supplier if (!supplier || ! || !productNameproductName) continue) continue;
-
-               ;
-
-                // Extrair o // Extrair o histórico de histórico de quantidades quantidades
-               
-                const history const history = = [];
-                for (let [];
-                for (let j = j = 0 0; j; j < dates < dates.length; j++).length; j++) {
-                    const quantity {
-                    const quantity = data = data[i[i][4 + j][4 + j];
-                    if];
-                    if (quantity (quantity !== undefined !== undefined && quantity && quantity !== null && quantity !== null && quantity !== ' !== '')') {
-                        // {
-                        // Converter valores Converter valores como " como "2 cx" para2 cx" para números números
-                        let
-                        let qty qtyValue =Value = quantity quantity;
-                        if (typeof;
-                        if (typeof quantity === quantity === 'string 'string')') {
-                            if (quantity {
-                            if (quantity.includes('.includes('cx'))cx')) {
-                                {
-                                qty qtyValue = parseInt(Value = parseInt(quantity)quantity) ||  || 00;
-                            };
-                            } else if ( else if (quantityquantity.includes('*')).includes('*')) {
-                                {
-                                // Cal // Calcular expressõescular expressões como "= como "=6*6*2525"
-                                try"
+            
+            // Processar os produtos
+            const newProducts = [];
+            for (let i = headerRowIndex + 1; i < data.length; i++) {
+                if (!data[i] || data[i].length < 4) continue;
+                
+                const supplier = data[i][1];
+                const productName = data[i][2];
+                const organization = data[i][3];
+                
+                if (!supplier || !productName) continue;
+                
+                // Extrair o histórico de quantidades
+                const history = [];
+                for (let j = 0; j < dates.length; j++) {
+                    const quantity = data[i][4 + j];
+                    if (quantity !== undefined && quantity !== null && quantity !== '') {
+                        // Converter valores como "2 cx" para números
+                        let qtyValue = quantity;
+                        if (typeof quantity === 'string') {
+                            if (quantity.includes('cx')) {
+                                qtyValue = parseInt(quantity) || 0;
+                            } else if (quantity.includes('*')) {
+                                // Calcular expressões como "=6*25"
                                 try {
-                                    {
-                                    qtyValue = qtyValue = eval( eval(quantity.replacequantity.replace('=',('=', ''));
-                                } ' catch ('));
-                                } catch (e)e) {
-                                    {
-                                    qty qtyValue =Value = 0 0;
-                               ;
+                                    qtyValue = eval(quantity.replace('=', ''));
+                                } catch (e) {
+                                    qtyValue = 0;
                                 }
-                            }
-                            } else } else {
-                                {
-                                qtyValue = parseFloat qty(quantityValue = parseFloat(quantity) ||) || 0 0;
-                           ;
+                            } else {
+                                qtyValue = parseFloat(quantity) || 0;
                             }
                         }
-
-                        history.push }
-                       ({
-                            }
-
+                        
                         history.push({
-                            date: dates[j date: dates[j],
-                           ],
-                            quantity: quantity: qtyValue qtyValue,
-                            action,
-                            action: ': 'registroregistro histórico'
- histórico'
+                            date: dates[j],
+                            quantity: qtyValue,
+                            action: 'registro histórico'
                         });
-                        });
-                                       }
+                    }
                 }
-                }
-
-                // }
-
-                // Determinar Determinar a quantidade a quantidade atual (último registro)
-                const currentQuantity = history.length > 0 ? history[history.length - 1].quantity : 0 atual (último registro)
+                
+                // Determinar a quantidade atual (último registro)
                 const currentQuantity = history.length > 0 ? history[history.length - 1].quantity : 0;
-
-                newProducts;
-
-                newProducts.push.push({
-                    supplier({
-                    supplier: supplier: supplier,
-                   ,
-                    name: name: productName productName,
-                   ,
-                    organization: organization: organization organization,
-                    current,
-                    currentQuantity:Quantity: currentQuantity currentQuantity,
-                   ,
-                    history: history history: history
-               
+                
+                newProducts.push({
+                    supplier: supplier,
+                    name: productName,
+                    organization: organization,
+                    currentQuantity: currentQuantity,
+                    history: history
                 });
-            });
             }
-
-            // }
-
-            // Adicionar os Adicionar os novos produtos novos produtos
-           
-            newProducts newProducts.forEach(product.forEach(product => => {
-                if (is {
-                if (isOnline)Online) {
-                    {
-                    addProduct addProductToFirebase(productToFirebase(product).then).then(id =>(id => {
-                        {
-                        product.id product.id = id;
-                        = id;
-                        products.push products.push(product(product);
-                        renderProducts);
+            
+            // Adicionar os novos produtos
+            newProducts.forEach(product => {
+                if (isOnline) {
+                    addProductToFirebase(product).then(id => {
+                        product.id = id;
+                        products.push(product);
                         renderProducts();
-                   ();
                     });
-                } });
                 } else {
-                    // else {
-                    // Gerar Gerar ID tempor ID temporário paraário para uso offline
-                    uso offline
-                    product.id product.id = ' = 'temp_'temp_' + Date + Date.now();
-                   .now();
-                    add addToLocalToLocalStorage(productStorage(product);
-                    pendingChanges);
-                    pendingChanges.push({.push({ type: type: 'add 'add', data', data: product: product });
-                    });
-                    products.push(product products.push(product);
-               );
+                    // Gerar ID temporário para uso offline
+                    product.id = 'temp_' + Date.now();
+                    addToLocalStorage(product);
+                    pendingChanges.push({type: 'add', data: product});
+                    products.push(product);
                 }
-            }
             });
-
-            render });
-
-            renderProductsProducts();
-            alert();
-            alert(`Import(`Importação concluídaação concluída! ${! ${newProducts.length}newProducts.length} produtos import produtos importados.ados.`);
-       `);
-        }
-
-        // Inicializar }
-
-        // Inicializar a aplic a aplicaçãoação
-        function initApp
-        function initApp()() {
-            // Primeiro carreg {
-            // Primeiro carregar doar do localStorage para exibir localStorage para algo rapid exibir algo rapidamenteamente
-            load
-            loadFromLocalFromLocalStorage();
-
-            //Storage();
-
-            // Se Se não não houver houver dados, dados, inicializar inicializar com os dados padrão
-            if com os dados padrão
-            if (products.length === (products.length === 0 0)) {
-                initialize {
-                initializeWithDefaultWithDefaultDataData();
-           ();
-            }
-
-            render }
-
+            
             renderProducts();
-
-            //Products();
-
-            // Depois Depois tent tentarar carreg carregar doar do Firebase Firebase
-            load
-            loadProductsFromProductsFromFirebaseFirebase(() =>(() => {
-                {
-                renderProducts renderProducts();
-();
-            });
-
-                       });
-
-            // Config // Configurar ourar o botão botão de conf de confirmaçãoirmação de exclus de exclusãoão
-            document
-            document.getElementById('.getElementById('confirmDeleteconfirmDeleteBtn').Btn').addEventListeneraddEventListener('click('click', delete', deleteProductProduct);
-       );
+            alert(`Importação concluída! ${newProducts.length} produtos importados.`);
         }
 
-        // }
+        // Inicializar a aplicação
+        function initApp() {
+            // Primeiro carregar do localStorage para exibir algo rapidamente
+            loadFromLocalStorage();
+            
+            // Se não houver dados, inicializar com os dados padrão
+            if (products.length === 0) {
+                initializeWithDefaultData();
+            }
+            
+            renderProducts();
+            
+            // Depois tentar carregar do Firebase
+            loadProductsFromFirebase(() => {
+                renderProducts();
+            });
+            
+            // Configurar o botão de confirmação de exclusão
+            document.getElementById('confirmDeleteBtn').addEventListener('click', deleteProduct);
+        }
 
-        // Inicial Inicializar aizar a aplicação aplicação quando o quando o documento est documento estiver cariver carregadoregado
-       
-        document.addEventListener document.addEventListener('DOM('DOMContentLoadedContentLoaded', init', initAppApp);
+        // Inicializar a aplicação quando o documento estiver carregado
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
-</body);
-    </>
-</script>
 </body>
-</htmlhtml>
-```>
-```
+</html>
